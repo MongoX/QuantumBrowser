@@ -6,6 +6,5 @@ public class MenuBar extends JMenuBar {
     {
         add(new JMenu("File") {{
         }});
-
     }
 }

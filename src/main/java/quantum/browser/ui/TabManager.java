@@ -28,7 +28,9 @@ public class TabManager extends JTabbedPane {
     }
 
     public void newTab() {
-        add("Loading...", new Tab(this, owner.app.createClient()));
+        Tab tab = new Tab(this, owner.app.createClient());
+        insertTab("Loading...", null, tab, null, getSelectedIndex()+1);
+        setSelectedComponent(tab);
     }
 
     public Tab currentTab() {

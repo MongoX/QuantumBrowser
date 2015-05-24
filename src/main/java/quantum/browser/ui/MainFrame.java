@@ -23,7 +23,7 @@ public class MainFrame extends JFrame {
     public MainFrame(boolean osrEnabled) {
         CefSettings settings = new CefSettings();
         settings.windowless_rendering_enabled = osrEnabled;
-        settings.background_color = settings.new ColorType(100, 255, 242, 211);
+        settings.background_color = settings.new ColorType(255, 255, 255, 255);
 
         app = CefApp.getInstance(settings);
         CefApp.addAppHandler(new AppHandler());
