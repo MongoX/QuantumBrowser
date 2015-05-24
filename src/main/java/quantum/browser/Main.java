@@ -2,6 +2,7 @@ package quantum.browser;
 
 import org.cef.OS;
 import quantum.browser.natives.NativeLoader;
+import quantum.browser.ui.MainFrame;
 
 import javax.swing.*;
 

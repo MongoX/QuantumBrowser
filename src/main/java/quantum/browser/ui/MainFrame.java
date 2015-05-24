@@ -1,9 +1,10 @@
-package quantum.browser;
+package quantum.browser.ui;
 
 import org.cef.CefApp;
 import org.cef.CefClient;
 import org.cef.CefSettings;
 import org.cef.browser.CefBrowser;
+import quantum.browser.Settings;
 import quantum.browser.handler.AppHandler;
 
 import javax.swing.*;
@@ -32,6 +33,7 @@ public class MainFrame extends JFrame {
         browserUI = browser.getUIComponent();
 
         getContentPane().add(browserUI, BorderLayout.CENTER);
+        pack();
         setSize(Settings.getDimension("window_size", new Dimension(800, 600)));
 
         addWindowListener(new WindowAdapter() {
