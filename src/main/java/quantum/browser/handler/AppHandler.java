@@ -10,7 +10,6 @@ public class AppHandler extends CefAppHandlerAdapter {
 
     @Override
     public void stateHasChanged(CefApp.CefAppState state) {
-        // Shutdown the app if the native CEF part is terminated
         if (state == CefApp.CefAppState.TERMINATED)
             System.exit(0);
     }

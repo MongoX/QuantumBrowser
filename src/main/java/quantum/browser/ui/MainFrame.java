@@ -1,11 +1,7 @@
 package quantum.browser.ui;
 
 import org.cef.CefApp;
-import org.cef.CefClient;
 import org.cef.CefSettings;
-import org.cef.browser.CefBrowser;
-import org.cef.handler.CefDisplayHandler;
-import org.cef.handler.CefDisplayHandlerAdapter;
 import quantum.browser.Settings;
 import quantum.browser.handler.AppHandler;
 
@@ -29,7 +25,6 @@ public class MainFrame extends JFrame {
 
         app = CefApp.getInstance(settings);
         CefApp.addAppHandler(new AppHandler());
-        //app.createClient().dispose();
 
         System.out.println(app.getVersion());
 

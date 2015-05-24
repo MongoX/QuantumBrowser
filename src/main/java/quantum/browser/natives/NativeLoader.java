@@ -76,7 +76,6 @@ public class NativeLoader {
         File binaryPath = getBinaryPath(platform);
         if (binaryPath == null)
             throw new UnsupportedOperationException("No binary for platform");
-        System.out.println(binaryPath);
 
         unpack("common", binaryPath);
         unpack(platform, binaryPath);
