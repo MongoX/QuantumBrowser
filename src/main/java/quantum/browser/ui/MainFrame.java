@@ -17,6 +17,8 @@ public class MainFrame extends JFrame {
     protected final CefBrowser browser;
     protected final Component browserUI;
     protected final CefApp app;
+    protected final ToolBar toolBar = new ToolBar();
+    protected final MenuBar menubar = new MenuBar();
 
     public MainFrame(boolean osrEnabled) {
         CefSettings settings = new CefSettings();
@@ -32,6 +34,8 @@ public class MainFrame extends JFrame {
         browser = client.createBrowser("https://dmoj.ca/", osrEnabled, false);
         browserUI = browser.getUIComponent();
 
+        setJMenuBar(menubar);
+        getContentPane().add(toolBar);
         getContentPane().add(browserUI, BorderLayout.CENTER);
         pack();
         setSize(Settings.getDimension("window_size", new Dimension(800, 600)));
