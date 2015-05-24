@@ -90,6 +90,7 @@ public class Settings {
 
     public static final String appData, localAppData;
     public static final File dataDirectory, localDataDirectory, cookieDirectory, cacheDirectory;
+    public static final File logFile;
 
     static {
         if (OS.isWindows()) {
@@ -108,5 +109,6 @@ public class Settings {
         cookieDirectory.mkdir();
         cacheDirectory = new File(localDataDirectory, "cache");
         cacheDirectory.mkdir();
+        logFile = new File(localDataDirectory, "debug.log");
     }
 }

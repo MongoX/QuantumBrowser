@@ -24,9 +24,10 @@ public class MainFrame extends JFrame {
         CefSettings settings = new CefSettings();
         settings.windowless_rendering_enabled = osrEnabled;
         settings.cache_path = Settings.cacheDirectory.getAbsolutePath();
+        settings.log_file = Settings.logFile.getAbsolutePath();
         settings.background_color = settings.new ColorType(255, 255, 255, 255);
 
-        app = CefApp.getInstance(new String[]{"--enable-webgl", "--ignore-gpu-blacklist"}, settings);
+        app = CefApp.getInstance(settings);
         CefApp.addAppHandler(new AppHandler());
         //app.createClient().dispose();
 
