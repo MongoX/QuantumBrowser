@@ -1,6 +1,11 @@
 package quantum.browser;
 
+import org.cef.OS;
+
 import java.awt.*;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
 public class Settings {
@@ -81,5 +86,27 @@ public class Settings {
 
     public static void putDimension(String key, Dimension dimension) {
         put(key, String.format("%d:%d", dimension.width, dimension.height));
+    }
+
+    public static final String appData, localAppData;
+    public static final File dataDirectory, localDataDirectory, cookieDirectory, cacheDirectory;
+
+    static {
+        if (OS.isWindows()) {
+            appData = System.getenv("AppData");
+        } else if (OS.isMacintosh()) {
+            appData = System.getProperty("user.home") + "/Library/Application Support";
+        } else {
+            appData = System.getProperty("user.home") + "/.local/share";
+        }
+        localAppData = OS.isWindows() && System.getenv("LocalAppData") != null ? System.getenv("LocalAppData") : appData;
+        dataDirectory = Paths.get(appData, "Quantum", "Browser").toFile();
+        dataDirectory.mkdirs();
+        localDataDirectory = Paths.get(localAppData, "Quantum", "Browser").toFile();
+        localDataDirectory.mkdirs();
+        cookieDirectory = new File(dataDirectory, "cookies");
+        cookieDirectory.mkdir();
+        cacheDirectory = new File(localDataDirectory, "cache");
+        cacheDirectory.mkdir();
     }
 }

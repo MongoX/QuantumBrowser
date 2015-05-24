@@ -18,7 +18,7 @@ public class Tab extends JPanel {
         this.manager = manager;
         this.client = client;
 
-        browser = client.createBrowser("https://dmoj.ca/", manager.osrEnabled, false);
+        browser = client.createBrowser("https://dmoj.ca/", manager.osrEnabled, false, manager.getRequestContext());
         browser.setWindowVisibility(false);
 
         add(browser.getUIComponent(), BorderLayout.CENTER);
