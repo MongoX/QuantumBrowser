@@ -6,8 +6,6 @@ import org.cef.handler.CefDisplayHandlerAdapter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.invoke.MethodHandle;
-import java.lang.reflect.Method;
 
 public class Tab extends JPanel {
     private TabManager manager;
@@ -41,27 +39,5 @@ public class Tab extends JPanel {
             }
         });
 
-        /*new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Method method = browser.getClass().getDeclaredMethod("doUpdate");
-                    method.setAccessible(true);
-                    while (true) {
-                        if (Tab.this != manager.currentTab()) {
-                            method.invoke(browser);
-                            System.out.println("Invoke");
-                        }
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                } catch (ReflectiveOperationException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();*/
     }
 }

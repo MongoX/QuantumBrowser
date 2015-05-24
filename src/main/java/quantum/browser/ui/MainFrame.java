@@ -31,7 +31,7 @@ public class MainFrame extends JFrame {
         System.out.println(app.getVersion());
 
         tabManager = new TabManager(this, osrEnabled);
-        menubar = new MenuBar();
+        menubar = new MenuBar(this);
         toolBar = new ToolBar(this);
         setJMenuBar(menubar);
         getContentPane().add(toolBar, BorderLayout.NORTH);
