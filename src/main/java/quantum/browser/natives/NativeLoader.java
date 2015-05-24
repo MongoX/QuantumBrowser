@@ -15,15 +15,24 @@ public class NativeLoader {
         return null;
     }
 
-    public static File getBinaryPath(String platform) {
-        InputStream versionStream = NativeLoader.class.getClassLoader().getResourceAsStream("org/cef/binaries/" + platform + "/version.txt");
+    private static String readJarFileLine(String path) {
+        InputStream versionStream = NativeLoader.class.getClassLoader().getResourceAsStream(path);
         if (versionStream == null)
             return null;
-
-        String version;
         try {
-            version = new BufferedReader(new InputStreamReader(versionStream)).readLine();
+            return new BufferedReader(new InputStreamReader(versionStream)).readLine();
         } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static File getBinaryPath(String platform) {
+        String version = readJarFileLine("org/cef/binaries/" + platform + "/version.txt");
+        if (version == null)
+            return null;
+        String commonVersion = readJarFileLine("org/cef/binaries/" + platform + "/version.txt");
+        if (!version.equals(commonVersion)) {
+            System.out.println("Malformed common package");
             return null;
         }
 
@@ -69,6 +78,7 @@ public class NativeLoader {
             throw new UnsupportedOperationException("No binary for platform");
         System.out.println(binaryPath);
 
+        unpack("common", binaryPath);
         unpack(platform, binaryPath);
 
         String oldPath = System.getProperty("java.library.path");
