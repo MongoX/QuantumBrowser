@@ -15,12 +15,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class MainFrame extends JFrame {
-    final CefClient client;
-    final CefBrowser browser;
-    final Component browserUI;
     final CefApp app;
     final ToolBar toolBar;
     final MenuBar menubar;
+    final TabManager tabManager;
 
     public MainFrame(boolean osrEnabled) {
         CefSettings settings = new CefSettings();
@@ -32,15 +30,12 @@ public class MainFrame extends JFrame {
 
         System.out.println(app.getVersion());
 
-        client = app.createClient();
-        browser = client.createBrowser("https://dmoj.ca/", osrEnabled, false);
-        browserUI = browser.getUIComponent();
-
+        tabManager = new TabManager(this, osrEnabled);
         menubar = new MenuBar();
         toolBar = new ToolBar(this);
         setJMenuBar(menubar);
         getContentPane().add(toolBar, BorderLayout.NORTH);
-        getContentPane().add(browserUI, BorderLayout.CENTER);
+        getContentPane().add(tabManager, BorderLayout.CENTER);
         pack();
         setSize(Settings.getDimension("window_size", new Dimension(800, 600)));
 
@@ -52,5 +47,12 @@ public class MainFrame extends JFrame {
                 dispose();
             }
         });
+
+        tabManager.newTab();
+    }
+
+    @Override
+    public void setTitle(String title) {
+        super.setTitle(title + " - Quantum Browser");
     }
 }
