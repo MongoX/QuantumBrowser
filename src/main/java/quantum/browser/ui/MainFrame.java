@@ -4,6 +4,8 @@ import org.cef.CefApp;
 import org.cef.CefClient;
 import org.cef.CefSettings;
 import org.cef.browser.CefBrowser;
+import org.cef.handler.CefDisplayHandler;
+import org.cef.handler.CefDisplayHandlerAdapter;
 import quantum.browser.Settings;
 import quantum.browser.handler.AppHandler;
 
@@ -13,12 +15,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class MainFrame extends JFrame {
-    protected final CefClient client;
-    protected final CefBrowser browser;
-    protected final Component browserUI;
-    protected final CefApp app;
-    protected final ToolBar toolBar = new ToolBar();
-    protected final MenuBar menubar = new MenuBar();
+    final CefClient client;
+    final CefBrowser browser;
+    final Component browserUI;
+    final CefApp app;
+    final ToolBar toolBar;
+    final MenuBar menubar;
 
     public MainFrame(boolean osrEnabled) {
         CefSettings settings = new CefSettings();
@@ -34,8 +36,10 @@ public class MainFrame extends JFrame {
         browser = client.createBrowser("https://dmoj.ca/", osrEnabled, false);
         browserUI = browser.getUIComponent();
 
+        menubar = new MenuBar();
+        toolBar = new ToolBar(this);
         setJMenuBar(menubar);
-        getContentPane().add(toolBar);
+        getContentPane().add(toolBar, BorderLayout.NORTH);
         getContentPane().add(browserUI, BorderLayout.CENTER);
         pack();
         setSize(Settings.getDimension("window_size", new Dimension(800, 600)));
