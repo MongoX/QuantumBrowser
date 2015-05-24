@@ -12,30 +12,32 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class MainFrame extends JFrame {
-    protected CefClient client;
-    protected CefBrowser browser;
-    protected Component browserUI;
+    protected final CefClient client;
+    protected final CefBrowser browser;
+    protected final Component browserUI;
+    protected final CefApp app;
 
     public MainFrame(boolean osrEnabled) {
         CefSettings settings = new CefSettings();
         settings.windowless_rendering_enabled = osrEnabled;
         settings.background_color = settings.new ColorType(100, 255, 242, 211);
 
-        CefApp app = CefApp.getInstance(settings);
+        app = CefApp.getInstance(settings);
         CefApp.addAppHandler(new AppHandler());
 
-        CefApp.CefVersion version = app.getVersion();
-        System.out.println("Using:\n" + version);
+        System.out.println(app.getVersion());
 
         client = app.createClient();
         browser = client.createBrowser("https://dmoj.ca/", osrEnabled, false);
         browserUI = browser.getUIComponent();
 
         getContentPane().add(browserUI, BorderLayout.CENTER);
+        setSize(Settings.getDimension("window_size", new Dimension(800, 600)));
 
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                Settings.putDimension("window_size", getSize());
                 CefApp.getInstance().dispose();
                 dispose();
             }
