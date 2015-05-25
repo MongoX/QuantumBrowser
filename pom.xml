@@ -60,22 +60,17 @@
         </dependency>
         <dependency>
             <groupId>org.jcef</groupId>
-            <artifactId>gluegen</artifactId>
+            <artifactId>jcef-common</artifactId>
             <version>3.2171.111</version>
         </dependency>
         <dependency>
             <groupId>org.jcef</groupId>
-            <artifactId>jogl</artifactId>
+            <artifactId>jcef-win32</artifactId>
             <version>3.2171.111</version>
         </dependency>
         <dependency>
             <groupId>org.jcef</groupId>
-            <artifactId>gluegen-i586</artifactId>
-            <version>3.2171.111</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jcef</groupId>
-            <artifactId>jogl-i586</artifactId>
+            <artifactId>jcef-win64</artifactId>
             <version>3.2171.111</version>
         </dependency>
     </dependencies>
