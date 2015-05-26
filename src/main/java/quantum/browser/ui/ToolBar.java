@@ -1,9 +1,12 @@
 package quantum.browser.ui;
 
 
+import org.cef.browser.CefBrowser;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 
 public class ToolBar extends JToolBar {
     JTextField addressBar = new JTextField();
@@ -20,17 +23,34 @@ public class ToolBar extends JToolBar {
         }};
     }
 
-    JButton backButton = makeNavButton("nav-back.png", "Back", new ActionListener() {
+    final JButton backButton = makeNavButton("nav-back.png", "Back", new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             manager.currentTab().browser.goBack();
         }
     });
 
-    JButton forwardButton = makeNavButton("nav-forward.png", "Forward", new ActionListener() {
+    final JButton forwardButton = makeNavButton("nav-forward.png", "Forward", new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             manager.currentTab().browser.goForward();
+        }
+    });
+
+    final JButton refreshButton = makeNavButton("nav-refresh.png", "Refresh", new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if ((e.getModifiers() & InputEvent.CTRL_MASK) == 0)
+                manager.currentTab().browser.reload();
+            else
+                manager.currentTab().browser.reloadIgnoreCache();
+        }
+    });
+
+    final JButton stopButton = makeNavButton("nav-stop.png", "Stop", new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            manager.currentTab().browser.stopLoad();
         }
     });
 
@@ -47,6 +67,8 @@ public class ToolBar extends JToolBar {
 
         add(backButton);
         add(forwardButton);
+        add(refreshButton);
+        add(stopButton);
         add(addressBar);
         add(makeNavButton("nav-tab-new.png", "New Tab", new ActionListener() {
                 @Override

@@ -52,6 +52,9 @@ public class TabManager extends JTabbedPane {
             owner.toolBar.addressBar.setText(tab.browser.getURL());
             owner.toolBar.backButton.setEnabled(tab.browser.canGoBack());
             owner.toolBar.forwardButton.setVisible(tab.browser.canGoForward());
+            boolean loading = tab.browser.isLoading();
+            owner.toolBar.stopButton.setVisible(loading);
+            owner.toolBar.refreshButton.setVisible(!loading);
         }
     }
 
