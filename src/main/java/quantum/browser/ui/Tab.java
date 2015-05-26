@@ -3,6 +3,7 @@ package quantum.browser.ui;
 import org.cef.CefClient;
 import org.cef.browser.CefBrowser;
 import org.cef.handler.*;
+import quantum.browser.Settings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,7 +25,8 @@ public class Tab extends JPanel {
         this.manager = manager;
         this.client = client;
 
-        browser = client.createBrowser("https://dmoj.ca/", manager.osrEnabled, false, manager.getRequestContext());
+        browser = client.createBrowser(Settings.get("home_page", "https://dmoj.ca/"),
+                manager.osrEnabled, false, manager.getRequestContext());
         browser.setWindowVisibility(false);
 
         splitPane.setTopComponent(browser.getUIComponent());
