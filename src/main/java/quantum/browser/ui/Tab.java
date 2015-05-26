@@ -19,6 +19,7 @@ public class Tab extends JPanel {
     final CefBrowser browser;
     final CefClient client;
     String title = "Loading...";
+    String statusText;
 
     public Tab(final TabManager manager, CefClient client) {
         super(new BorderLayout());
@@ -55,6 +56,13 @@ public class Tab extends JPanel {
                 if (browser != Tab.this.browser) return;
                 Tab.this.title = title;
                 manager.setTitleAt(manager.indexOfComponent(Tab.this), title);
+                manager.updateNavigation(Tab.this);
+            }
+
+            @Override
+            public void onStatusMessage(CefBrowser browser, String value) {
+                if (browser != Tab.this.browser) return;
+                statusText = value;
                 manager.updateNavigation(Tab.this);
             }
         });

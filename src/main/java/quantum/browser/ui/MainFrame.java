@@ -15,6 +15,7 @@ public class MainFrame extends JFrame {
     final ToolBar toolBar;
     final MenuBar menubar;
     final TabManager tabManager;
+    final StatusBar statusBar;
 
     public MainFrame(boolean osrEnabled) {
         CefSettings settings = new CefSettings();
@@ -28,12 +29,14 @@ public class MainFrame extends JFrame {
 
         System.out.println(app.getVersion());
 
+        statusBar = new StatusBar();
         tabManager = new TabManager(this, osrEnabled);
         menubar = new MenuBar(this);
         toolBar = new ToolBar(this);
         setJMenuBar(menubar);
         getContentPane().add(toolBar, BorderLayout.NORTH);
         getContentPane().add(tabManager, BorderLayout.CENTER);
+        getContentPane().add(statusBar, BorderLayout.SOUTH);
         pack();
         setSize(Settings.getDimension("window_size", new Dimension(800, 600)));
 

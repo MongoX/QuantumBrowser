@@ -88,6 +88,7 @@ public class TabManager extends JTabbedPane {
             boolean loading = tab.browser.isLoading();
             owner.toolBar.stopButton.setVisible(loading);
             owner.toolBar.refreshButton.setVisible(!loading);
+            owner.statusBar.setStatus(tab.statusText);
         }
     }
 
