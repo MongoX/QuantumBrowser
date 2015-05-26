@@ -3,6 +3,8 @@ package quantum.browser.ui;
 import org.cef.CefClient;
 import org.cef.browser.CefBrowser;
 import org.cef.handler.CefDisplayHandlerAdapter;
+import org.cef.handler.CefLoadHandler;
+import org.cef.handler.CefLoadHandlerAdapter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,5 +41,15 @@ public class Tab extends JPanel {
             }
         });
 
+        client.addLoadHandler(new CefLoadHandlerAdapter() {
+            @Override
+            public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
+                if (isLoading) {
+                    title = "Loading...";
+                    manager.setTitleAt(manager.indexOfComponent(Tab.this), "Loading...");
+                }
+                manager.updateNavigation(Tab.this);
+            }
+        });
     }
 }
