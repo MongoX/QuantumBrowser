@@ -28,6 +28,7 @@ public class Tab extends JPanel {
         browser.setWindowVisibility(false);
 
         splitPane.setTopComponent(browser.getUIComponent());
+        splitPane.setEnabled(false);
         splitPane.setDividerSize(0);
         add(splitPane, BorderLayout.CENTER);
 
@@ -91,6 +92,7 @@ public class Tab extends JPanel {
                     hideDevTools();
             }
         });
+        splitPane.setEnabled(true);
         splitPane.setDividerSize(2);
         splitPane.setDividerLocation(Math.max(splitPane.getHeight() - 200, 50));
         splitPane.setBottomComponent(devToolsUI);
@@ -101,6 +103,8 @@ public class Tab extends JPanel {
         devTools.close();
         devTools = null;
         splitPane.setBottomComponent(null);
+        splitPane.setEnabled(false);
+        splitPane.setDividerSize(0);
     }
 
     public void close() {
