@@ -80,7 +80,7 @@ public class TabManager extends JTabbedPane {
     }
 
     public void updateNavigation(Tab tab) {
-        if (getSelectedComponent() == tab) {
+        if (tab != null && getSelectedComponent() == tab) {
             owner.setTitle(tab.title);
             owner.toolBar.addressBar.setText(tab.browser.getURL());
             owner.toolBar.backButton.setEnabled(tab.browser.canGoBack());

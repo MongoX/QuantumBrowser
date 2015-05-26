@@ -31,6 +31,13 @@ public class Tab extends JPanel {
         splitPane.setDividerSize(0);
         add(splitPane, BorderLayout.CENTER);
 
+        client.addLifeSpanHandler(new CefLifeSpanHandlerAdapter() {
+            @Override
+            public boolean doClose(CefBrowser browser) {
+                return true;
+            }
+        });
+
         client.addDisplayHandler(new CefDisplayHandlerAdapter() {
             @Override
             public void onAddressChange(CefBrowser browser, String url) {
