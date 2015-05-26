@@ -7,10 +7,7 @@ import quantum.browser.Settings;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 
 public class Tab extends JPanel {
     protected TabManager manager;
@@ -20,6 +17,8 @@ public class Tab extends JPanel {
     final CefClient client;
     String title = "Loading...";
     String statusText;
+    int loadProgress = 0;
+    boolean loading = false;
 
     public Tab(final TabManager manager, CefClient client) {
         super(new BorderLayout());
@@ -67,14 +66,29 @@ public class Tab extends JPanel {
             }
         });
 
+        final Timer timer = new Timer(100, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadProgress += (1000 - loadProgress) / 3;
+                manager.updateLoadStatus(Tab.this);
+            }
+        });
+
         client.addLoadHandler(new CefLoadHandlerAdapter() {
             @Override
             public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
                 if (browser != Tab.this.browser) return;
                 if (isLoading) {
+                    loadProgress = 0;
+                    timer.start();
                     title = "Loading...";
                     manager.setTitleAt(manager.indexOfComponent(Tab.this), "Loading...");
+                } else {
+                    loadProgress = 1000;
+                    timer.stop();
                 }
+                loading = isLoading;
+                manager.updateLoadStatus(Tab.this);
                 manager.updateNavigation(Tab.this);
             }
         });

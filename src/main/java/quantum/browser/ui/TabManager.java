@@ -31,6 +31,7 @@ public class TabManager extends JTabbedPane {
             @Override
             public void stateChanged(ChangeEvent e) {
                 updateNavigation(currentTab());
+                updateLoadStatus(currentTab());
             }
         });
 
@@ -77,6 +78,13 @@ public class TabManager extends JTabbedPane {
                 }
             });
         return requestContext;
+    }
+
+    public void updateLoadStatus(Tab tab) {
+        if (tab != null && getSelectedComponent() == tab) {
+            owner.statusBar.setProgress(tab.loadProgress);
+            owner.statusBar.setVisible(tab.loading);
+        }
     }
 
     public void updateNavigation(Tab tab) {
