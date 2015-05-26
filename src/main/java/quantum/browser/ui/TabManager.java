@@ -129,7 +129,7 @@ public class TabManager extends JTabbedPane {
         private JLabel titleLabel;
 
         public TabLabel(String title) {
-            setLayout(new GridBagLayout());
+            setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
             closeButton = new JButton() {
                 @Override
@@ -151,19 +151,17 @@ public class TabManager extends JTabbedPane {
 
                     g2.setColor(getModel().isRollover() ? Color.RED : new Color(0x090909));
 
-                    int delta = 5;
+                    int delta = 1;
                     g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
                     g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
                     g2.dispose();
                 }
 
                 {
-                    setPreferredSize(new Dimension(17, 17));
                     setUI(new BasicButtonUI());
                     setContentAreaFilled(false);
                     setFocusable(false);
-                    setBorder(BorderFactory.createEtchedBorder());
-                    setBorderPainted(false);
+                    setBorder(BorderFactory.createEmptyBorder(8, 8, 0, 0));
                 }
             };
 
@@ -171,6 +169,7 @@ public class TabManager extends JTabbedPane {
             setFocusable(false);
 
             add(titleLabel = new JLabel(title));
+            add(Box.createHorizontalStrut(3));
             add(closeButton);
         }
 
