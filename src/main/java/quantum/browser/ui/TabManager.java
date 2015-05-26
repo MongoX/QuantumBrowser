@@ -14,6 +14,7 @@ public class TabManager extends JTabbedPane {
     boolean osrEnabled;
     private CefCookieManager cookieManager;
     private CefRequestContext requestContext;
+    private ToolBar toolBar;
 
     public TabManager(final MainFrame owner, boolean osrEnabled) {
         this.owner = owner;
@@ -49,6 +50,8 @@ public class TabManager extends JTabbedPane {
         if (getSelectedComponent() == tab) {
             owner.setTitle(tab.title);
             owner.toolBar.addressBar.setText(tab.browser.getURL());
+            owner.toolBar.backButton.setEnabled(tab.browser.canGoBack());
+            owner.toolBar.forwardButton.setVisible(tab.browser.canGoForward());
         }
     }
 
