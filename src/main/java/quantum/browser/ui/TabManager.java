@@ -8,6 +8,12 @@ import quantum.browser.Settings;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.BasicButtonUI;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class TabManager extends JTabbedPane {
     private MainFrame owner;
@@ -25,6 +31,33 @@ public class TabManager extends JTabbedPane {
             @Override
             public void stateChanged(ChangeEvent e) {
                 updateNavigation(currentTab());
+            }
+        });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                final int index = getUI().tabForCoordinate(TabManager.this, e.getX(), e.getY());
+                if (index == -1)
+                    return;
+                if (SwingUtilities.isMiddleMouseButton(e)) {
+                    if (getTabComponentAt(index) instanceof TabLabel)
+                        ((TabLabel) getTabComponentAt(index)).getCloseButton().doClick();
+                } else if (SwingUtilities.isRightMouseButton(e)) {
+                    e.consume();
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e))
+                    e.consume();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e))
+                    e.consume();
             }
         });
     }
@@ -59,12 +92,85 @@ public class TabManager extends JTabbedPane {
     }
 
     public void newTab() {
-        Tab tab = new Tab(this, owner.app.createClient());
+        final Tab tab = new Tab(this, owner.app.createClient());
         insertTab("Loading...", null, tab, null, getSelectedIndex() + 1);
         setSelectedComponent(tab);
+        setTabComponentAt(indexOfComponent(tab), new TabLabel("Loading...") {{
+            getCloseButton().addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    tab.close();
+                }
+            });
+        }});
+    }
+
+    @Override
+    public void setTitleAt(int index, String title) {
+        super.setTitleAt(index, title);
+        ((TabLabel) getTabComponentAt(index)).getTitleLabel().setText(title);
     }
 
     public Tab currentTab() {
         return (Tab) getSelectedComponent();
+    }
+
+    static class TabLabel extends JPanel {
+        private JButton closeButton;
+        private JLabel titleLabel;
+
+        public TabLabel(String title) {
+            setLayout(new GridBagLayout());
+
+            closeButton = new JButton() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    Graphics2D g2 = (Graphics2D) g.create();
+
+                    if (getModel().isPressed())
+                        g2.translate(1, 1);
+
+                    g2.setStroke(new Stroke() {
+                        BasicStroke stroke1 = new BasicStroke(1),
+                                stroke2 = new BasicStroke(1);
+
+                        public Shape createStrokedShape(Shape s) {
+                            return stroke2.createStrokedShape(stroke1.createStrokedShape(s));
+                        }
+                    });
+
+                    g2.setColor(getModel().isRollover() ? Color.RED : new Color(0x090909));
+
+                    int delta = 5;
+                    g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
+                    g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
+                    g2.dispose();
+                }
+
+                {
+                    setPreferredSize(new Dimension(17, 17));
+                    setUI(new BasicButtonUI());
+                    setContentAreaFilled(false);
+                    setFocusable(false);
+                    setBorder(BorderFactory.createEtchedBorder());
+                    setBorderPainted(false);
+                }
+            };
+
+            setOpaque(false);
+            setFocusable(false);
+
+            add(titleLabel = new JLabel(title));
+            add(closeButton);
+        }
+
+        public JButton getCloseButton() {
+            return closeButton;
+        }
+
+        public JLabel getTitleLabel() {
+            return titleLabel;
+        }
     }
 }
