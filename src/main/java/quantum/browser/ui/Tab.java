@@ -7,13 +7,16 @@ import org.cef.callback.CefQueryCallback;
 import org.cef.handler.*;
 import quantum.browser.Settings;
 import quantum.browser.utils.Resources;
+import quantum.browser.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 
 public class Tab extends JPanel {
     protected TabManager manager;
@@ -102,6 +105,12 @@ public class Tab extends JPanel {
                 if (browser != Tab.this.browser) return;
                 browser.executeJavaScript(faviconJS, "chrome://favicon.js", 0);
             }
+
+            @Override
+            public void onLoadStart(CefBrowser browser, int frameIdentifer) {
+                ImageIcon icon = manager.favicon.getFavicon(Utils.getDomain(browser.getURL()), null);
+                System.out.println(icon);
+            }
         });
 
         client.addKeyboardHandler(new CefKeyboardHandlerAdapter() {
@@ -131,7 +140,10 @@ public class Tab extends JPanel {
                             } catch (MalformedURLException ignored) {}
                         } else {
                             try {
-                                System.out.println("Favicon: " + new URL(new URL(browser.getURL()), data[2]).toExternalForm());
+                                URL favicon = new URL(new URL(browser.getURL()), data[2]);
+                                ImageIcon icon = manager.favicon.getFavicon(Utils.getDomain(browser.getURL()), favicon);
+                                System.out.println(icon);
+                                System.out.println("Favicon: " + favicon.toExternalForm());
                             } catch (MalformedURLException ignored) {}
                         }
                     }

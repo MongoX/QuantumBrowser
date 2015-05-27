@@ -90,7 +90,7 @@ public class Settings {
 
     public static final String appData, localAppData;
     public static final File dataDirectory, localDataDirectory, cookieDirectory, cacheDirectory;
-    public static final File logFile;
+    public static final File logFile, faviconCache;
 
     static {
         if (OS.isWindows()) {
@@ -110,5 +110,7 @@ public class Settings {
         cacheDirectory = new File(localDataDirectory, "cache");
         cacheDirectory.mkdir();
         logFile = new File(localDataDirectory, "debug.log");
+        faviconCache = new File(localDataDirectory, "favicon");
+        faviconCache.mkdir();
     }
 }
