@@ -2,12 +2,18 @@ package quantum.browser.ui;
 
 import org.cef.CefClient;
 import org.cef.browser.CefBrowser;
+import org.cef.browser.CefMessageRouter;
+import org.cef.callback.CefQueryCallback;
 import org.cef.handler.*;
 import quantum.browser.Settings;
+import quantum.browser.utils.Resources;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
 
 public class Tab extends JPanel {
     protected TabManager manager;
@@ -74,6 +80,7 @@ public class Tab extends JPanel {
             }
         });
 
+        final String faviconJS = Resources.readResource("quantum/browser/favicon.js");
         client.addLoadHandler(new CefLoadHandlerAdapter() {
             @Override
             public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
@@ -91,6 +98,12 @@ public class Tab extends JPanel {
                 manager.updateLoadStatus(Tab.this);
                 manager.updateNavigation(Tab.this);
             }
+
+            @Override
+            public void onLoadEnd(CefBrowser browser, int frameIdentifier, int httpStatusCode) {
+                if (browser != Tab.this.browser) return;
+                browser.executeJavaScript(faviconJS, "chrome://favicon.js", 0);
+            }
         });
 
         client.addKeyboardHandler(new CefKeyboardHandlerAdapter() {
@@ -103,6 +116,22 @@ public class Tab extends JPanel {
                 return true;
             }
         });
+
+        client.addMessageRouter(CefMessageRouter.create(new CefMessageRouterHandlerAdapter() {
+            @Override
+            public boolean onQuery(CefBrowser browser, long query_id, String request, boolean persistent, CefQueryCallback callback) {
+                if (request.startsWith("favicon:")) {
+                    String[] data = request.split("\001");
+                    if (data.length != 3 || !"favicon:".equals(data[0]))
+                        return false;
+                    if (browser.getURL().equals(data[1]))
+                        try {
+                            System.out.println("Favicon: " + new URL(new URL(browser.getURL()), data[2]).toExternalForm());
+                        } catch (MalformedURLException ignored) {}
+                }
+                return false;
+            }
+        }));
     }
 
     public void showDevTools() {
