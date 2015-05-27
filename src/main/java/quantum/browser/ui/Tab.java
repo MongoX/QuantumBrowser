@@ -109,9 +109,11 @@ public class Tab extends JPanel {
             public boolean onKeyEvent(CefBrowser browser, CefKeyEvent event) {
                 if (browser == Tab.this.browser &&
                         event.type == CefKeyEvent.EventType.KEYEVENT_KEYUP &&
-                        event.windows_key_code == 123)
+                        event.windows_key_code == 123) {
                     showDevTools();
-                return true;
+                    return true;
+                }
+                return false;
             }
         });
 
