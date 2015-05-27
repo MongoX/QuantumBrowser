@@ -24,7 +24,6 @@ public class Tab extends JPanel {
     String title = "Loading...";
     String statusText;
     int loadProgress = 0;
-    boolean loading = false;
 
     public Tab(final TabManager manager, CefClient client) {
         super(new BorderLayout());
@@ -72,7 +71,7 @@ public class Tab extends JPanel {
             }
         });
 
-        final Timer timer = new Timer(100, new ActionListener() {
+        final Timer timer = new Timer(200, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 loadProgress += (1000 - loadProgress) / 3;
@@ -94,7 +93,6 @@ public class Tab extends JPanel {
                     loadProgress = 1000;
                     timer.stop();
                 }
-                loading = isLoading;
                 manager.updateLoadStatus(Tab.this);
                 manager.updateNavigation(Tab.this);
             }
