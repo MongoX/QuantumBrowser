@@ -121,13 +121,20 @@ public class Tab extends JPanel {
             @Override
             public boolean onQuery(CefBrowser browser, long query_id, String request, boolean persistent, CefQueryCallback callback) {
                 if (request.startsWith("favicon:")) {
-                    String[] data = request.split("\001");
+                    String[] data = request.split("\001", -1);
                     if (data.length != 3 || !"favicon:".equals(data[0]))
                         return false;
-                    if (browser.getURL().equals(data[1]))
-                        try {
-                            System.out.println("Favicon: " + new URL(new URL(browser.getURL()), data[2]).toExternalForm());
-                        } catch (MalformedURLException ignored) {}
+                    if (browser.getURL().equals(data[1])) {
+                        if (data[2].isEmpty()) {
+                            try {
+                                System.out.println("Favicon (default): " + new URL(new URL(browser.getURL()), "/favicon.ico").toExternalForm());
+                            } catch (MalformedURLException ignored) {}
+                        } else {
+                            try {
+                                System.out.println("Favicon: " + new URL(new URL(browser.getURL()), data[2]).toExternalForm());
+                            } catch (MalformedURLException ignored) {}
+                        }
+                    }
                 }
                 return false;
             }
