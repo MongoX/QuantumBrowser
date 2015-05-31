@@ -23,6 +23,7 @@ public class Tab extends JPanel {
     protected TabManager manager;
     protected JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
     protected CefBrowser devTools;
+    protected FindPanel findPanel;
     final CefBrowser browser;
     final CefClient client;
     String title = "Loading...";
@@ -117,11 +118,30 @@ public class Tab extends JPanel {
         client.addKeyboardHandler(new CefKeyboardHandlerAdapter() {
             @Override
             public boolean onKeyEvent(CefBrowser browser, CefKeyEvent event) {
-                if (browser == Tab.this.browser &&
-                        event.type == CefKeyEvent.EventType.KEYEVENT_KEYUP &&
-                        event.windows_key_code == 123) {
-                    showDevTools();
-                    return true;
+                if (browser != Tab.this.browser)
+                    return false;
+                if (event.type == CefKeyEvent.EventType.KEYEVENT_KEYUP) {
+                    switch (event.windows_key_code) {
+                        case 123:
+                            SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    showDevTools();
+                                }
+                            });
+                            return true;
+                        case 70:
+                            if (event.modifiers == CefContextMenuHandler.EventFlags.EVENTFLAG_CONTROL_DOWN) {
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showFind();
+                                    }
+                                });
+                                return true;
+                            }
+                            break;
+                    }
                 }
                 return false;
             }
@@ -154,6 +174,21 @@ public class Tab extends JPanel {
         }));
 
         client.addRequestHandler(new RequestHandler(manager.owner));
+    }
+
+    public void showFind() {
+        if (findPanel == null)
+            findPanel = new FindPanel(this);
+        add(findPanel, BorderLayout.SOUTH);
+        findPanel.activate();
+        revalidate();
+    }
+
+    public void hideFind() {
+        remove(findPanel);
+        revalidate();
+        browser.stopFinding(false);
+        splitPane.getTopComponent().requestFocusInWindow();
     }
 
     public void showDevTools() {
