@@ -6,6 +6,7 @@ import org.cef.browser.CefMessageRouter;
 import org.cef.callback.CefQueryCallback;
 import org.cef.handler.*;
 import quantum.browser.Settings;
+import quantum.browser.handler.RequestHandler;
 import quantum.browser.utils.Resources;
 import quantum.browser.utils.Utils;
 
@@ -151,6 +152,8 @@ public class Tab extends JPanel {
                 return false;
             }
         }));
+
+        client.addRequestHandler(new RequestHandler(manager.owner));
     }
 
     public void showDevTools() {

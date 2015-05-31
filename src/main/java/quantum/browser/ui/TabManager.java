@@ -18,7 +18,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class TabManager extends JTabbedPane {
-    private MainFrame owner;
+    public final MainFrame owner;
     boolean osrEnabled;
     private CefCookieManager cookieManager;
     private CefRequestContext requestContext;
