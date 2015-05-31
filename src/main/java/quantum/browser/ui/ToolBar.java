@@ -4,6 +4,7 @@ package quantum.browser.ui;
 import org.cef.browser.CefBrowser;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -55,6 +56,7 @@ public class ToolBar extends JToolBar {
     });
 
     public ToolBar(final MainFrame owner) {
+        setLayout(new BorderLayout());
         this.owner = owner;
         manager = owner.tabManager;
 
@@ -65,16 +67,22 @@ public class ToolBar extends JToolBar {
             }
         });
 
-        add(backButton);
-        add(forwardButton);
-        add(refreshButton);
-        add(stopButton);
-        add(addressBar);
-        add(makeNavButton("nav-tab-new.png", "New Tab", new ActionListener() {
+        add(new JPanel() {{
+            setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+            add(backButton);
+            add(forwardButton);
+            add(refreshButton);
+            add(stopButton);
+        }}, BorderLayout.WEST);
+        add(addressBar, BorderLayout.CENTER);
+        add(new JPanel() {{
+            setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+            add(makeNavButton("nav-tab-new.png", "New Tab", new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     manager.newTab();
                 }
             }));
+        }}, BorderLayout.EAST);
     }
 }
