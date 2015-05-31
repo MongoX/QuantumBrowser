@@ -215,6 +215,7 @@ public class Tab extends JPanel {
         splitPane.setBottomComponent(null);
         splitPane.setEnabled(false);
         splitPane.setDividerSize(0);
+        splitPane.getTopComponent().requestFocusInWindow();
     }
 
     public void close() {
