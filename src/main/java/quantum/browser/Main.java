@@ -10,8 +10,15 @@ public class Main {
     public static void main(String... args) {
         NativeLoader.unpack();
         try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {}
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            // Then metal...
+        }
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 new MainFrame(OS.isLinux()).setVisible(true);
