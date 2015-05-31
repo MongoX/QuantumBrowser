@@ -100,7 +100,7 @@ public class Tab extends JPanel {
                 manager.updateNavigation(Tab.this);
             }
 
-            @Override
+            /*@Override
             public void onLoadEnd(CefBrowser browser, int frameIdentifier, int httpStatusCode) {
                 if (browser != Tab.this.browser) return;
                 browser.executeJavaScript(faviconJS, "chrome://favicon.js", 0);
@@ -110,7 +110,7 @@ public class Tab extends JPanel {
             public void onLoadStart(CefBrowser browser, int frameIdentifer) {
                 ImageIcon icon = manager.favicon.getFavicon(Utils.getDomain(browser.getURL()), null);
                 System.out.println(icon);
-            }
+            }*/
         });
 
         client.addKeyboardHandler(new CefKeyboardHandlerAdapter() {
