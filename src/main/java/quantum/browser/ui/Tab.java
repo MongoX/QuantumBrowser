@@ -130,7 +130,7 @@ public class Tab extends JPanel {
                                 }
                             });
                             return true;
-                        case 70:
+                        case 'F':
                             if (event.modifiers == CefContextMenuHandler.EventFlags.EVENTFLAG_CONTROL_DOWN) {
                                 SwingUtilities.invokeLater(new Runnable() {
                                     @Override
@@ -141,6 +141,17 @@ public class Tab extends JPanel {
                                 return true;
                             }
                             break;
+                        case 'N':
+                        case 'T':
+                            if (event.modifiers == CefContextMenuHandler.EventFlags.EVENTFLAG_CONTROL_DOWN) {
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        manager.newTab();
+                                    }
+                                });
+                                return true;
+                            }
                     }
                 }
                 return false;
