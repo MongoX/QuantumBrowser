@@ -3,6 +3,8 @@ package quantum.browser.ui;
 import org.cef.CefClient;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefMessageRouter;
+import org.cef.callback.CefContextMenuParams;
+import org.cef.callback.CefMenuModel;
 import org.cef.callback.CefQueryCallback;
 import org.cef.handler.*;
 import quantum.browser.Settings;
@@ -185,6 +187,13 @@ public class Tab extends JPanel {
         }));
 
         client.addRequestHandler(new RequestHandler(manager.owner));
+
+        client.addContextMenuHandler(new CefContextMenuHandlerAdapter() {
+            @Override
+            public void onBeforeContextMenu(CefBrowser browser, CefContextMenuParams params, CefMenuModel model) {
+                model.clear();
+            }
+        });
     }
 
     public void showFind() {
