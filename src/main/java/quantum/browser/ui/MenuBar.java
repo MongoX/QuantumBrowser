@@ -1,5 +1,7 @@
 package quantum.browser.ui;
 
+import quantum.browser.data.Settings;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -54,6 +56,10 @@ public class MenuBar extends JMenuBar {
                     owner.tabManager.currentTab().showFind();
                 }
             }));
+        }});
+        add(new BookmarkMenu(owner.tabManager, Settings.bookmarks) {{
+            setText("Bookmarks");
+            setMnemonic('B');
         }});
         add(new JMenu("Tools") {{
             setMnemonic('T');
