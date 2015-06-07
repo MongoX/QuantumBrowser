@@ -102,7 +102,11 @@ public class TabManager extends JTabbedPane {
     }
 
     public void newTab() {
-        final Tab tab = new Tab(this, owner.app.createClient());
+        newTab(Settings.get("home_page", "https://dmoj.ca/"));
+    }
+
+    public void newTab(String url) {
+        final Tab tab = new Tab(this, owner.app.createClient(), url);
         insertTab("Loading...", null, tab, null, getSelectedIndex() + 1);
         setSelectedComponent(tab);
         setTabComponentAt(indexOfComponent(tab), new TabLabel("Loading...") {{

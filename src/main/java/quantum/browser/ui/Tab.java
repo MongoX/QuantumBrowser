@@ -14,6 +14,8 @@ import quantum.browser.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -36,13 +38,12 @@ public class Tab extends JPanel {
     String statusText;
     int loadProgress = 0;
 
-    public Tab(final TabManager manager, CefClient client) {
+    public Tab(final TabManager manager, CefClient client, String url) {
         super(new BorderLayout());
         this.manager = manager;
         this.client = client;
 
-        browser = client.createBrowser(Settings.get("home_page", "https://dmoj.ca/"),
-                manager.osrEnabled, false, manager.getRequestContext());
+        browser = client.createBrowser(url, manager.osrEnabled, false, manager.getRequestContext());
         browser.setWindowVisibility(false);
 
         splitPane.setTopComponent(browser.getUIComponent());
@@ -193,6 +194,10 @@ public class Tab extends JPanel {
         client.addRequestHandler(new RequestHandler(manager.owner));
 
         client.addContextMenuHandler(new CefContextMenuHandlerAdapter() {
+            public final int MENU_ID_OPEN_LINK = MENU_ID_USER_FIRST;
+            public final int MENU_ID_NEW_TAB = MENU_ID_USER_FIRST + 1;
+            public final int MENU_ID_COPY_LINK = MENU_ID_USER_FIRST + 2;
+
             @Override
             public void onBeforeContextMenu(CefBrowser browser, CefContextMenuParams params, CefMenuModel model) {
                 model.clear();
@@ -209,7 +214,7 @@ public class Tab extends JPanel {
                         model.addItem(MENU_ID_PASTE, "&Paste");
                         model.addItem(MENU_ID_DELETE, "&Delete");
                         model.addSeparator();
-                        model.addItem(MENU_ID_SELECT_ALL, "&Select All");
+                        model.addItem(MENU_ID_SELECT_ALL, "&Select all");
                     }
                     model.setEnabled(MENU_ID_UNDO, (params.getEditStateFlags() & CM_EDITFLAG_CAN_UNDO) != 0);
                     model.setEnabled(MENU_ID_REDO, (params.getEditStateFlags() & CM_EDITFLAG_CAN_REDO) != 0);
@@ -219,7 +224,10 @@ public class Tab extends JPanel {
                     model.setEnabled(MENU_ID_DELETE, (params.getEditStateFlags() & CM_EDITFLAG_CAN_DELETE) != 0);
                     model.setEnabled(MENU_ID_SELECT_ALL, (params.getEditStateFlags() & CM_EDITFLAG_CAN_SELECT_ALL) != 0);
                 } else if ((params.getTypeFlags() & CM_TYPEFLAG_LINK) != 0) {
-
+                    model.addItem(MENU_ID_OPEN_LINK, "&Follow");
+                    model.addItem(MENU_ID_NEW_TAB, "Follow in &new tab");
+                    model.addSeparator();
+                    model.addItem(MENU_ID_COPY_LINK, "&Copy link address");
                 } else {
                     model.addItem(MENU_ID_BACK, "&Back");
                     model.addItem(MENU_ID_FORWARD, "&Forward");
@@ -228,11 +236,29 @@ public class Tab extends JPanel {
                     model.addSeparator();
                     model.addItem(MENU_ID_PRINT, "&Print...");
                     model.addSeparator();
-                    model.addItem(MENU_ID_VIEW_SOURCE, "&View Source");
+                    model.addItem(MENU_ID_VIEW_SOURCE, "&View source");
                     model.setEnabled(MENU_ID_BACK, browser.canGoBack());
                     model.setEnabled(MENU_ID_FORWARD, browser.canGoForward());
                     model.setEnabled(MENU_ID_RELOAD, !browser.isLoading());
                     model.setEnabled(MENU_ID_STOPLOAD, browser.isLoading());
+                }
+            }
+
+            @Override
+            public boolean onContextMenuCommand(CefBrowser browser, CefContextMenuParams params, int commandId, int eventFlags) {
+                switch (commandId) {
+                    case MENU_ID_OPEN_LINK:
+                        browser.loadURL(params.getLinkUrl());
+                        return true;
+                    case MENU_ID_NEW_TAB:
+                        manager.newTab(params.getLinkUrl());
+                        return true;
+                    case MENU_ID_COPY_LINK:
+                        StringSelection selection = new StringSelection(params.getUnfilteredLinkUrl());
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+                        return true;
+                    default:
+                        return false;
                 }
             }
         });
