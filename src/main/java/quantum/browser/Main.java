@@ -19,6 +19,7 @@ public class Main {
         } catch (Exception e) {
             // Then metal...
         }
+        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 new MainFrame(OS.isLinux()).setVisible(true);
