@@ -7,13 +7,16 @@ import quantum.browser.dialog.BookmarkDialog;
 import quantum.browser.dialog.BookmarkFolderDialog;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
 public class BookmarkMenu extends JMenu implements BookmarkListener, BookmarkFolderListener {
     private final TabManager manager;
     private final Bookmarks store;
+    private final String name;
     private HashMap<String, Bookmark> bookmarks = new HashMap<>();
     private HashMap<String, BookmarkMenu> folders = new HashMap<>();
 
@@ -25,6 +28,7 @@ public class BookmarkMenu extends JMenu implements BookmarkListener, BookmarkFol
         super(name);
         this.manager = manager;
         this.store = store;
+        this.name = name;
 
         add(new JMenuItem("Add New...") {{
             addActionListener(new ActionListener() {
@@ -79,5 +83,24 @@ public class BookmarkMenu extends JMenu implements BookmarkListener, BookmarkFol
     @Override
     public void folderRemoved(String name) {
         remove(folders.remove(name));
+    }
+
+    @Override
+    protected void processMouseEvent(MouseEvent e) {
+        if (name != null && SwingUtilities.isRightMouseButton(e)) {
+            final PopupMenu menu = new PopupMenu(name);
+            manager.owner.add(menu);
+            menu.add(new MenuItem("Delete") {{
+                addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        store.delete();
+                        manager.owner.remove(menu);
+                    }
+                });
+            }});
+            menu.show(this, e.getX(), e.getY());
+        } else
+            super.processMouseEvent(e);
     }
 }

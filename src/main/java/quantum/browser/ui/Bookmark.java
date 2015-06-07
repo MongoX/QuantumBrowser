@@ -25,9 +25,16 @@ public class Bookmark extends JMenuItem implements ActionListener {
     protected void processMouseEvent(MouseEvent e) {
         if (SwingUtilities.isRightMouseButton(e)) {
             final PopupMenu menu = new PopupMenu(name);
-            add(menu);
+            manager.owner.add(menu);
             menu.add(new MenuItem("Delete") {{
-                folder.delete(name);
+                addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.out.println("Demolishing!!!!");
+                        folder.delete(name);
+                        manager.owner.remove(menu);
+                    }
+                });
             }});
             menu.show(this, e.getX(), e.getY());
         } else
