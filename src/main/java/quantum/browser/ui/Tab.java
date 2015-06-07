@@ -21,6 +21,10 @@ import java.awt.event.ComponentEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static org.cef.callback.CefContextMenuParams.EditStateFlags.*;
+import static org.cef.callback.CefContextMenuParams.TypeFlags.*;
+import static org.cef.callback.CefMenuModel.MenuId.*;
+
 public class Tab extends JPanel {
     protected TabManager manager;
     protected JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -192,6 +196,44 @@ public class Tab extends JPanel {
             @Override
             public void onBeforeContextMenu(CefBrowser browser, CefContextMenuParams params, CefMenuModel model) {
                 model.clear();
+                if ((params.getTypeFlags() & (CM_TYPEFLAG_SELECTION |
+                                              CM_TYPEFLAG_EDITABLE)) != 0) {
+                    if (params.isEditable()) {
+                        model.addItem(MENU_ID_UNDO, "&Undo");
+                        model.addItem(MENU_ID_REDO, "&Redo");
+                        model.addSeparator();
+                        model.addItem(MENU_ID_CUT, "Cu&t");
+                    }
+                    model.addItem(MENU_ID_COPY, "&Copy");
+                    if (params.isEditable()) {
+                        model.addItem(MENU_ID_PASTE, "&Paste");
+                        model.addItem(MENU_ID_DELETE, "&Delete");
+                        model.addSeparator();
+                        model.addItem(MENU_ID_SELECT_ALL, "&Select All");
+                    }
+                    model.setEnabled(MENU_ID_UNDO, (params.getEditStateFlags() & CM_EDITFLAG_CAN_UNDO) != 0);
+                    model.setEnabled(MENU_ID_REDO, (params.getEditStateFlags() & CM_EDITFLAG_CAN_REDO) != 0);
+                    model.setEnabled(MENU_ID_CUT, (params.getEditStateFlags() & CM_EDITFLAG_CAN_CUT) != 0);
+                    model.setEnabled(MENU_ID_COPY, (params.getEditStateFlags() & CM_EDITFLAG_CAN_COPY) != 0);
+                    model.setEnabled(MENU_ID_PASTE, (params.getEditStateFlags() & CM_EDITFLAG_CAN_PASTE) != 0);
+                    model.setEnabled(MENU_ID_DELETE, (params.getEditStateFlags() & CM_EDITFLAG_CAN_DELETE) != 0);
+                    model.setEnabled(MENU_ID_SELECT_ALL, (params.getEditStateFlags() & CM_EDITFLAG_CAN_SELECT_ALL) != 0);
+                } else if ((params.getTypeFlags() & CM_TYPEFLAG_LINK) != 0) {
+
+                } else {
+                    model.addItem(MENU_ID_BACK, "&Back");
+                    model.addItem(MENU_ID_FORWARD, "&Forward");
+                    model.addItem(MENU_ID_RELOAD, "&Reload");
+                    model.addItem(MENU_ID_STOPLOAD, "&Stop");
+                    model.addSeparator();
+                    model.addItem(MENU_ID_PRINT, "&Print...");
+                    model.addSeparator();
+                    model.addItem(MENU_ID_VIEW_SOURCE, "&View Source");
+                    model.setEnabled(MENU_ID_BACK, browser.canGoBack());
+                    model.setEnabled(MENU_ID_FORWARD, browser.canGoForward());
+                    model.setEnabled(MENU_ID_RELOAD, !browser.isLoading());
+                    model.setEnabled(MENU_ID_STOPLOAD, browser.isLoading());
+                }
             }
         });
     }
