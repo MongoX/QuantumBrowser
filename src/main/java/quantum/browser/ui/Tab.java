@@ -7,7 +7,7 @@ import org.cef.callback.CefContextMenuParams;
 import org.cef.callback.CefMenuModel;
 import org.cef.callback.CefQueryCallback;
 import org.cef.handler.*;
-import quantum.browser.Settings;
+import quantum.browser.data.Settings;
 import quantum.browser.handler.RequestHandler;
 import quantum.browser.utils.Resources;
 import quantum.browser.utils.Utils;

@@ -3,7 +3,7 @@ package quantum.browser.ui;
 import org.cef.browser.CefRequestContext;
 import org.cef.handler.CefRequestContextHandler;
 import org.cef.network.CefCookieManager;
-import quantum.browser.Settings;
+import quantum.browser.data.Settings;
 import quantum.browser.utils.FaviconManager;
 import quantum.browser.utils.MemoryFaviconManager;
 

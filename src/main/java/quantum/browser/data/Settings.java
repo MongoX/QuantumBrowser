@@ -1,15 +1,15 @@
-package quantum.browser;
+package quantum.browser.data;
 
 import org.cef.OS;
 
 import java.awt.*;
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
 public class Settings {
     private static Preferences preferences = Preferences.userNodeForPackage(Settings.class);
+    public static final Bookmarks bookmarks = new Bookmarks(preferences.node("bookmarks"));
 
     public static Preferences get() {
         return preferences;

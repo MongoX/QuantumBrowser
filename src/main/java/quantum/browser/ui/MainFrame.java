@@ -2,7 +2,7 @@ package quantum.browser.ui;
 
 import org.cef.CefApp;
 import org.cef.CefSettings;
-import quantum.browser.Settings;
+import quantum.browser.data.Settings;
 import quantum.browser.handler.AppHandler;
 
 import javax.swing.*;
