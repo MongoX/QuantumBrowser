@@ -3,8 +3,12 @@ package quantum.browser.ui;
 import quantum.browser.data.BookmarkFolderListener;
 import quantum.browser.data.BookmarkListener;
 import quantum.browser.data.Bookmarks;
+import quantum.browser.dialog.BookmarkDialog;
+import quantum.browser.dialog.BookmarkFolderDialog;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 public class BookmarkMenu extends JMenu implements BookmarkListener, BookmarkFolderListener {
@@ -13,15 +17,37 @@ public class BookmarkMenu extends JMenu implements BookmarkListener, BookmarkFol
     private HashMap<String, Bookmark> bookmarks = new HashMap<>();
     private HashMap<String, BookmarkMenu> folders = new HashMap<>();
 
-    public BookmarkMenu(TabManager manager, Bookmarks store) {
+    public BookmarkMenu(final TabManager manager, final Bookmarks store) {
+        this(manager, store, null);
+    }
+
+    private BookmarkMenu(final TabManager manager, final Bookmarks store, String name) {
+        super(name);
         this.manager = manager;
         this.store = store;
 
-        add(new BookmarkAdd(manager, store));
+        add(new JMenuItem("Add New...") {{
+            addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new BookmarkDialog(manager.owner, store, manager.currentTab().browser.getURL()).setVisible(true);
+                }
+            });
+            setMnemonic('N');
+        }});
+        add(new JMenuItem("Add New Folder...") {{
+            addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new BookmarkFolderDialog(manager.owner, store, manager.currentTab().browser.getURL()).setVisible(true);
+                }
+            });
+            setMnemonic('F');
+        }});
         addSeparator();
 
         for (final String child : store.folders())
-            add(new BookmarkMenu(manager, store.getFolder(child)) {{ folders.put(child, this); }});
+            add(new BookmarkMenu(manager, store.getFolder(child), child) {{ folders.put(child, this); }});
 
         for (final String bookmark : store.getList())
             add(new Bookmark(manager, bookmark, store) {{ bookmarks.put(bookmark, this); }});
@@ -47,7 +73,7 @@ public class BookmarkMenu extends JMenu implements BookmarkListener, BookmarkFol
 
     @Override
     public void folderAdded(final String name) {
-        add(new BookmarkMenu(manager, store.getFolder(name)) {{ folders.put(name, this); }});
+        add(new BookmarkMenu(manager, store.getFolder(name), name) {{ folders.put(name, this); }});
     }
 
     @Override
