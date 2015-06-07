@@ -1,7 +1,7 @@
 package quantum.browser.data;
 
 public interface BookmarkListener {
-    void addBookmark(String name, String url);
-    void editBookmark(String name, String url);
-    void removeBookmark(String name);
+    void addedBookmark(String name, String url);
+    void editedBookmark(String name, String url);
+    void removedBookmark(String name);
 }

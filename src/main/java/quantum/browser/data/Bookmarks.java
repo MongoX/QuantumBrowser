@@ -1,17 +1,14 @@
 package quantum.browser.data;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.PreferenceChangeListener;
-import java.util.prefs.Preferences;
+import java.util.prefs.*;
 
 public class Bookmarks {
     protected Preferences node;
     protected HashSet<String> keys = new HashSet<>();
     protected HashSet<BookmarkListener> bookmarkListeners = new HashSet<>();
+    protected HashSet<BookmarkFolderListener> folderListeners = new HashSet<>();
 
     Bookmarks(Preferences node) {
         this.node = node;
@@ -28,16 +25,30 @@ public class Bookmarks {
                 if (e.getNewValue() != null) {
                     if (keys.add(e.getKey())) {
                         for (BookmarkListener listener : bookmarkListeners)
-                            listener.addBookmark(e.getKey(), e.getNewValue());
+                            listener.addedBookmark(e.getKey(), e.getNewValue());
                     } else {
                         for (BookmarkListener listener : bookmarkListeners)
-                            listener.editBookmark(e.getKey(), e.getNewValue());
+                            listener.editedBookmark(e.getKey(), e.getNewValue());
                     }
                 } else {
                     keys.remove(e.getKey());
                     for (BookmarkListener listener : bookmarkListeners)
-                        listener.removeBookmark(e.getKey());
+                        listener.removedBookmark(e.getKey());
                 }
+            }
+        });
+
+        node.addNodeChangeListener(new NodeChangeListener() {
+            @Override
+            public void childAdded(NodeChangeEvent evt) {
+                for (BookmarkFolderListener listener : folderListeners)
+                    listener.folderAdded(evt.getChild().name());
+            }
+
+            @Override
+            public void childRemoved(NodeChangeEvent evt) {
+                for (BookmarkFolderListener listener : folderListeners)
+                    listener.folderRemoved(evt.getChild().name());
             }
         });
     }
@@ -48,6 +59,14 @@ public class Bookmarks {
 
     public void removeBookmarkListener(BookmarkListener listener) {
         bookmarkListeners.remove(listener);
+    }
+
+    public void addFolderListener(BookmarkFolderListener listener) {
+        folderListeners.add(listener);
+    }
+
+    public void removeFolderListener(BookmarkFolderListener listener) {
+        folderListeners.remove(listener);
     }
 
     public String[] folders() {
