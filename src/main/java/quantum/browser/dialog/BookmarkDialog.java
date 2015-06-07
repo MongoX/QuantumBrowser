@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 
 public class BookmarkDialog extends JDialog implements Runnable {
     public BookmarkDialog(final MainFrame owner, final Bookmarks store, String defaultURL) {
-        super(owner, "Authentication required", true);
+        super(owner, "New Bookmark...", true);
         final JTextField name = new JTextField(20);
         final JTextField url = new JTextField(defaultURL, 20);
 
