@@ -5,9 +5,7 @@ import org.cef.browser.CefBrowser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
+import java.awt.event.*;
 
 public class ToolBar extends JToolBar {
     JTextField addressBar = new JTextField();
@@ -60,6 +58,12 @@ public class ToolBar extends JToolBar {
         this.owner = owner;
         manager = owner.tabManager;
 
+        addressBar.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                addressBar.selectAll();
+            }
+        });
         addressBar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
