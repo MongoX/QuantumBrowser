@@ -4,6 +4,7 @@ import org.cef.browser.CefRequestContext;
 import org.cef.handler.CefRequestContextHandler;
 import org.cef.network.CefCookieManager;
 import quantum.browser.data.Settings;
+import quantum.browser.dialog.DownloadDialog;
 import quantum.browser.utils.FaviconManager;
 import quantum.browser.utils.MemoryFaviconManager;
 
@@ -24,12 +25,14 @@ public class TabManager extends JTabbedPane {
     private CefRequestContext requestContext;
     private ToolBar toolBar;
     FaviconManager favicon = new MemoryFaviconManager(Settings.faviconCache.getAbsolutePath());
+    DownloadDialog download;
 
     public TabManager(final MainFrame owner, boolean osrEnabled) {
         this.owner = owner;
         this.osrEnabled = osrEnabled;
 
         System.out.println(Settings.cookieDirectory.getAbsolutePath());
+        download = new DownloadDialog(this.owner);
         addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {

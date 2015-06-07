@@ -47,6 +47,12 @@ public class MenuBar extends JMenuBar {
                     owner.tabManager.newTab();
                 }
             }));
+            add(createMenuItem("Downloads", 'D', KeyStroke.getKeyStroke('J', Event.CTRL_MASK), new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    owner.tabManager.download.setVisible(true);
+                }
+            }));
         }});
         add(new JMenu("Edit") {{
             setMnemonic('E');

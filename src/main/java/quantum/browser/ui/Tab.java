@@ -197,6 +197,7 @@ public class Tab extends JPanel {
             public final int MENU_ID_OPEN_LINK = MENU_ID_USER_FIRST;
             public final int MENU_ID_NEW_TAB = MENU_ID_USER_FIRST + 1;
             public final int MENU_ID_COPY_LINK = MENU_ID_USER_FIRST + 2;
+            public final int MENU_ID_DOWNLOAD_IMAGE = MENU_ID_USER_FIRST + 3;
 
             @Override
             public void onBeforeContextMenu(CefBrowser browser, CefContextMenuParams params, CefMenuModel model) {
@@ -223,11 +224,17 @@ public class Tab extends JPanel {
                     model.setEnabled(MENU_ID_PASTE, (params.getEditStateFlags() & CM_EDITFLAG_CAN_PASTE) != 0);
                     model.setEnabled(MENU_ID_DELETE, (params.getEditStateFlags() & CM_EDITFLAG_CAN_DELETE) != 0);
                     model.setEnabled(MENU_ID_SELECT_ALL, (params.getEditStateFlags() & CM_EDITFLAG_CAN_SELECT_ALL) != 0);
-                } else if ((params.getTypeFlags() & CM_TYPEFLAG_LINK) != 0) {
-                    model.addItem(MENU_ID_OPEN_LINK, "&Follow");
-                    model.addItem(MENU_ID_NEW_TAB, "Follow in &new tab");
-                    model.addSeparator();
-                    model.addItem(MENU_ID_COPY_LINK, "&Copy link address");
+                } else if ((params.getTypeFlags() & (CM_TYPEFLAG_LINK | CM_TYPEFLAG_MEDIA)) != 0) {
+                    if ((params.getTypeFlags() & CM_TYPEFLAG_LINK) != 0) {
+                        model.addItem(MENU_ID_OPEN_LINK, "&Follow");
+                        model.addItem(MENU_ID_NEW_TAB, "Follow in &new tab");
+                        model.addSeparator();
+                        model.addItem(MENU_ID_COPY_LINK, "&Copy link address");
+                    }
+                    if ((params.getTypeFlags() & (CM_TYPEFLAG_LINK | CM_TYPEFLAG_MEDIA)) != (CM_TYPEFLAG_LINK | CM_TYPEFLAG_MEDIA))
+                        model.addSeparator();
+                    if ((params.getTypeFlags() & CM_TYPEFLAG_MEDIA) != 0)
+                        model.addItem(MENU_ID_DOWNLOAD_IMAGE, "&Download image");
                 } else {
                     model.addItem(MENU_ID_BACK, "&Back");
                     model.addItem(MENU_ID_FORWARD, "&Forward");
@@ -257,11 +264,16 @@ public class Tab extends JPanel {
                         StringSelection selection = new StringSelection(params.getUnfilteredLinkUrl());
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
                         return true;
+                    case MENU_ID_DOWNLOAD_IMAGE:
+                        browser.startDownload(params.getSourceUrl());
+                        return true;
                     default:
                         return false;
                 }
             }
         });
+
+        client.addDownloadHandler(manager.download);
     }
 
     public void showFind() {
