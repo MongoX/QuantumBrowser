@@ -64,7 +64,7 @@ public class Tab extends JPanel {
                 if (browser != Tab.this.browser) return;
                 title = "Loading...";
                 manager.setTitleAt(manager.indexOfComponent(Tab.this), "Loading...");
-                manager.updateNavigation(Tab.this);
+                manager.updateAddress(Tab.this);
             }
 
             @Override

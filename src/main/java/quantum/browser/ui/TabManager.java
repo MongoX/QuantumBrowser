@@ -34,6 +34,7 @@ public class TabManager extends JTabbedPane {
             @Override
             public void stateChanged(ChangeEvent e) {
                 updateNavigation(currentTab());
+                updateAddress(currentTab());
                 updateLoadStatus(currentTab());
             }
         });
@@ -88,10 +89,15 @@ public class TabManager extends JTabbedPane {
             owner.statusBar.setProgress(tab.loadProgress);
     }
 
+    public void updateAddress(Tab tab) {
+        if (tab != null && getSelectedComponent() == tab) {
+            owner.toolBar.addressBar.setText(tab.browser.getURL());
+        }
+    }
+
     public void updateNavigation(Tab tab) {
         if (tab != null && getSelectedComponent() == tab) {
             owner.setTitle(tab.title);
-            owner.toolBar.addressBar.setText(tab.browser.getURL());
             owner.toolBar.backButton.setEnabled(tab.browser.canGoBack());
             owner.toolBar.forwardButton.setVisible(tab.browser.canGoForward());
             boolean loading = tab.browser.isLoading();
