@@ -13,7 +13,10 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashMap;
@@ -38,10 +41,8 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
 
         public void update(CefDownloadItem download, CefDownloadItemCallback callback) {
             this.callback = callback;
-            if (path == null && !download.getFullPath().isEmpty()) {
-                path = new File(download.getFullPath());
-                filename = path.getName();
-            }
+            path = new File(download.getFullPath());
+            filename = path.getName();
             progress = download.getPercentComplete();
             received = download.getReceivedBytes();
             total = download.getTotalBytes();
@@ -183,12 +184,31 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
         add(new JScrollPane(table), BorderLayout.CENTER);
         setSize(640, 480);
         table.setDefaultRenderer(int.class, new ProgressRenderer());
+        table.getColumnModel().getColumn(1).setPreferredWidth(10);
+        table.getColumnModel().getColumn(2).setPreferredWidth(10);
+        table.getColumnModel().getColumn(3).setPreferredWidth(10);
+        table.getColumnModel().getColumn(4).setPreferredWidth(50);
+        table.getColumnModel().getColumn(5).setPreferredWidth(30);
         table.getColumnModel().getColumn(5).setCellRenderer(new DownloadButtonRenderer());
         table.getColumnModel().getColumn(5).setCellEditor(new DownloadButtonEditor());
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    File path = model.data.get(table.getSelectedColumn()).path;
+                    try {
+                        Desktop.getDesktop().open(path);
+                    } catch (IOException e1) {
+                        JOptionPane.showMessageDialog(DownloadDialog.this, "Could not open:\n" + path);
+                    }
+                }
+            }
+        });
     }
 
     @Override
     public void onBeforeDownload(CefBrowser browser, CefDownloadItem downloadItem, String suggestedName, CefBeforeDownloadCallback callback) {
+        setVisible(true);
         DownloadEntry entry = new DownloadEntry(downloadItem, suggestedName);
         model.data.add(entry);
         model.map.put(downloadItem.getId(), entry);
