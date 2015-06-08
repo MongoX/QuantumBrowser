@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="prism.css" rel="stylesheet" />
+  <style>
+    html, body { margin: 0; padding: 0 }
+    body { background: #F5F2F0 }
+    pre {
+      margin: 0 !important;
+      overflow: visible !important;
+    }
+    div {
+      position: fixed;
+      overflow-y: auto;
+      overflow-x: auto;
+      top: 0; bottom: 0; left: 0; right: 0;
+    }
+  </style>
+</head>
+<body>
+  <div><pre><code id="code" class="language-markup line-numbers"></code></pre></div>
+  <script src="prism.js" data-manual></script>
+  <script>
+    var block = document.getElementById('code');
+    if ('cefQuery' in window) {
+      window.cefQuery({
+        request: '',
+        onSuccess: function (response) {
+          block.textContent = response;
+          Prism.highlightElement(block);
+        }
+      });
+    } else {
+      block.textContent = new Array(200).join(new Array(50).join('<html></html>') + '\n');
+      Prism.highlightElement(block);
+    }
+  </script>
+</body>
+</html>
