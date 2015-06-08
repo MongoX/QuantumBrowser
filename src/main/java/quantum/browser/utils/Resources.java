@@ -12,11 +12,7 @@ public class Resources {
         return toString(stream);
     }
 
-    public static String toString(InputStream stream) {
-        return toString(stream, "UTF-8");
-    }
-
-    public static String toString(InputStream stream, String encoding) {
+    public static byte[] toByteArray(InputStream stream) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buf = new byte[65536];
         int read;
@@ -26,6 +22,17 @@ public class Resources {
         } catch (IOException e) {
             return null;
         }
-        return new String(baos.toByteArray(), Charset.forName(encoding));
+        return baos.toByteArray();
+    }
+
+    public static String toString(InputStream stream) {
+        return toString(stream, "UTF-8");
+    }
+
+    public static String toString(InputStream stream, String encoding) {
+        byte[] bytes = toByteArray(stream);
+        if (bytes == null)
+            return null;
+        return new String(bytes, Charset.forName(encoding));
     }
 }
