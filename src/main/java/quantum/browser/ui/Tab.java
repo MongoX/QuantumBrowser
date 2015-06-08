@@ -6,8 +6,10 @@ import org.cef.browser.CefMessageRouter;
 import org.cef.callback.CefContextMenuParams;
 import org.cef.callback.CefMenuModel;
 import org.cef.callback.CefQueryCallback;
+import org.cef.callback.CefStringVisitor;
 import org.cef.handler.*;
 import quantum.browser.data.Settings;
+import quantum.browser.dialog.ViewSourceDialog;
 import quantum.browser.handler.RequestHandler;
 import quantum.browser.utils.Resources;
 import quantum.browser.utils.Utils;
@@ -266,6 +268,15 @@ public class Tab extends JPanel {
                         return true;
                     case MENU_ID_DOWNLOAD_IMAGE:
                         browser.startDownload(params.getSourceUrl());
+                        return true;
+                    case MENU_ID_VIEW_SOURCE:
+                        final String url = browser.getURL();
+                        browser.getSource(new CefStringVisitor() {
+                            @Override
+                            public void visit(String string) {
+                                SwingUtilities.invokeLater(new ViewSourceDialog(manager.owner, url, string));
+                            }
+                        });
                         return true;
                     default:
                         return false;
