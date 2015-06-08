@@ -233,7 +233,7 @@ public class Tab extends JPanel {
                         model.addSeparator();
                         model.addItem(MENU_ID_COPY_LINK, "&Copy link address");
                     }
-                    if ((params.getTypeFlags() & (CM_TYPEFLAG_LINK | CM_TYPEFLAG_MEDIA)) != (CM_TYPEFLAG_LINK | CM_TYPEFLAG_MEDIA))
+                    if ((params.getTypeFlags() & (CM_TYPEFLAG_LINK | CM_TYPEFLAG_MEDIA)) == (CM_TYPEFLAG_LINK | CM_TYPEFLAG_MEDIA))
                         model.addSeparator();
                     if ((params.getTypeFlags() & CM_TYPEFLAG_MEDIA) != 0)
                         model.addItem(MENU_ID_DOWNLOAD_IMAGE, "&Download image");
