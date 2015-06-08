@@ -39,7 +39,6 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
         public void update(CefDownloadItem download, CefDownloadItemCallback callback) {
             this.callback = callback;
             if (path == null && !download.getFullPath().isEmpty()) {
-                System.out.println(download.getFullPath());
                 path = new File(download.getFullPath());
                 filename = path.getName();
             }
@@ -142,7 +141,6 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             final DownloadEntry entry = (DownloadEntry) value;
             setText(entry.done ? "Remove" : "Abort");
-            System.out.println("Renderer!");
             return this;
         }
     }
@@ -172,7 +170,6 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
                                                      boolean isSelected, int row, int column) {
             entry = (DownloadEntry) value;
             button.setText(entry.done ? "Remove" : "Abort");
-            System.out.println("Editing!");
             return button;
         }
     }
