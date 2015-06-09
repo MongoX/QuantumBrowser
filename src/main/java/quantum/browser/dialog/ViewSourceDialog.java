@@ -17,9 +17,9 @@ import java.io.InputStream;
 import java.net.URL;
 
 
-public class ViewSourceDialog extends JDialog implements Runnable {
-    public ViewSourceDialog(MainFrame owner, String url, final String content) {
-        super(owner, "View Source: " + url, false);
+public class ViewSourceDialog extends JFrame implements Runnable {
+    public ViewSourceDialog(String url, final String content) {
+        super("View Source: " + url);
         setLayout(new BorderLayout());
         setSize(new Dimension(640, 480));
 
@@ -33,7 +33,6 @@ public class ViewSourceDialog extends JDialog implements Runnable {
         }));
         CefBrowser browser = client.createBrowser("quantum://resources/prism.html", false, false);
         add(browser.getUIComponent(), BorderLayout.CENTER);
-        System.out.println("Done");
     }
 
     @Override
@@ -51,6 +50,6 @@ public class ViewSourceDialog extends JDialog implements Runnable {
         System.out.println(" Done");
         System.out.println(html);
         System.out.println(html.length());
-        SwingUtilities.invokeLater(new ViewSourceDialog(null, "http://en.wikipedia.org/wiki/Main_Page", html));
+        SwingUtilities.invokeLater(new ViewSourceDialog("http://en.wikipedia.org/wiki/Main_Page", html));
     }
 }
