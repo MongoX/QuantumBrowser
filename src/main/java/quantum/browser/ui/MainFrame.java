@@ -7,6 +7,8 @@ import quantum.browser.handler.AppHandler;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -50,6 +52,44 @@ public class MainFrame extends JFrame {
         });
 
         tabManager.newTab();
+
+
+        new Object() {{
+            getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke('T', Event.CTRL_MASK), this);
+            getRootPane().getActionMap().put(this, new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    tabManager.newTab();
+                }
+            });
+        }};
+        new Object() {{
+            getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("F5"), this);
+            getRootPane().getActionMap().put(this, new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    tabManager.currentTab().browser.reload();
+                }
+            });
+        }};
+        new Object() {{
+            getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, Event.CTRL_MASK), this);
+            getRootPane().getActionMap().put(this, new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    tabManager.currentTab().browser.reloadIgnoreCache();
+                }
+            });
+        }};
+        new Object() {{
+            getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke("F6"), this);
+            getRootPane().getActionMap().put(this, new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    toolBar.addressBar.requestFocusInWindow();
+                }
+            });
+        }};
     }
 
     @Override

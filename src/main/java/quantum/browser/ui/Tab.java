@@ -10,6 +10,7 @@ import org.cef.callback.CefStringVisitor;
 import org.cef.handler.*;
 import quantum.browser.data.Settings;
 import quantum.browser.dialog.ViewSourceDialog;
+import quantum.browser.handler.GeolocationHandler;
 import quantum.browser.handler.RequestHandler;
 import quantum.browser.utils.Resources;
 import quantum.browser.utils.Utils;
@@ -131,6 +132,15 @@ public class Tab extends JPanel {
                     return false;
                 if (event.type == CefKeyEvent.EventType.KEYEVENT_KEYUP) {
                     switch (event.windows_key_code) {
+                        case 116:
+                            if ((event.modifiers & CefContextMenuHandler.EventFlags.EVENTFLAG_CONTROL_DOWN) != 0)
+                                browser.reloadIgnoreCache();
+                            else
+                                browser.reload();
+                            return true;
+                        case 117:
+                            manager.owner.toolBar.addressBar.requestFocusInWindow();
+                            return true;
                         case 123:
                             SwingUtilities.invokeLater(new Runnable() {
                                 @Override
@@ -283,7 +293,7 @@ public class Tab extends JPanel {
                 }
             }
         });
-
+        client.addGeolocationHandler(new GeolocationHandler(manager.owner));
         client.addDownloadHandler(manager.download);
     }
 

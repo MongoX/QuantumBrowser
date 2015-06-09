@@ -33,14 +33,6 @@ public class MenuBar extends JMenuBar {
     public MenuBar(final MainFrame owner) {
         add(new JMenu("File") {{
             setMnemonic('F');
-            Object newTab = new Object();
-            owner.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke('T', Event.CTRL_MASK), newTab);
-            owner.getRootPane().getActionMap().put(newTab, new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    owner.tabManager.newTab();
-                }
-            });
             add(createMenuItem("New Tab", 'N', KeyStroke.getKeyStroke('N', Event.CTRL_MASK), new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
