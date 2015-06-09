@@ -284,7 +284,7 @@ public class Tab extends JPanel {
                         browser.getSource(new CefStringVisitor() {
                             @Override
                             public void visit(String string) {
-                                SwingUtilities.invokeLater(new ViewSourceDialog(manager.owner, url, string));
+                                new Thread(new ViewSourceDialog(manager.owner, url, string)).start();
                             }
                         });
                         return true;

@@ -19,7 +19,7 @@ public class RequestHandler extends CefRequestHandlerAdapter {
 
     @Override
     public boolean getAuthCredentials(CefBrowser browser, boolean isProxy, String host, int port, String realm, String scheme, CefAuthCallback callback) {
-        SwingUtilities.invokeLater(new PasswordDialog(frame, callback));
+        new Thread(new PasswordDialog(frame, callback)).start();
         return true;
     }
 

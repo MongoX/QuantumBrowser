@@ -16,17 +16,22 @@ public class GeolocationHandler extends CefGeolocationHandlerAdapter {
 
     @Override
     public boolean onRequestGeolocationPermission(CefBrowser browser, final String url, int id, final CefGeolocationCallback callback) {
-        SwingUtilities.invokeLater(new Runnable() {
+        System.out.println("Geolocation");
+        new Thread("Geolocation Confirm Thread") {
             @Override
             public void run() {
-                callback.Continue(JOptionPane.showConfirmDialog(frame,
+                System.out.println("Invoking...");
+                boolean allow = JOptionPane.showConfirmDialog(frame,
                         "The following page requests to know your location:\n" + url +
                                 "\nDo you want to provide such information?",
                         "Geolocation request",
                         JOptionPane.YES_NO_OPTION,
-                        JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION);
+                        JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION;
+                System.out.println("Done");
+                callback.Continue(allow);
+                System.out.println("Done");
             }
-        });
+        }.start();
         return true;
     }
 }

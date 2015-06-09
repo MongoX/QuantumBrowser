@@ -34,7 +34,7 @@ public class BookmarkMenu extends JMenu implements BookmarkListener, BookmarkFol
             addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new BookmarkDialog(manager.owner, store, manager.currentTab().browser.getURL()).setVisible(true);
+                    new Thread(new BookmarkDialog(manager.owner, store, manager.currentTab().browser.getURL())).start();
                 }
             });
             setMnemonic('N');
@@ -43,7 +43,7 @@ public class BookmarkMenu extends JMenu implements BookmarkListener, BookmarkFol
             addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new BookmarkFolderDialog(manager.owner, store, manager.currentTab().browser.getURL()).setVisible(true);
+                    new Thread(new BookmarkFolderDialog(manager.owner, store, manager.currentTab().browser.getURL())).start();
                 }
             });
             setMnemonic('F');

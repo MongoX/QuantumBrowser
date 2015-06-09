@@ -18,7 +18,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.HashMap;
 
 public class DownloadDialog extends JDialog implements CefDownloadHandler {
