@@ -67,6 +67,12 @@ public class MenuBar extends JMenuBar {
                     owner.tabManager.currentTab().showDevTools();
                 }
             }));
+            add(createMenuItem("Set as Home Page", 'H', new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Settings.put("home_page", owner.tabManager.currentTab().browser.getURL());
+                }
+            }));
         }});
     }
 }
