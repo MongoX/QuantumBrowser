@@ -8,13 +8,25 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * Class to load CEF libraries.
+ */
 public class NativeLoader {
+    /**
+     * Get the platform string.
+     * @return
+     */
     public static String getPlatform() {
         if (OS.isWindows())
             return "win" + System.getProperty("sun.arch.data.model");
         return null;
     }
 
+    /**
+     * Read one line from a text file in a jar.
+     * @param path
+     * @return
+     */
     private static String readJarFileLine(String path) {
         InputStream versionStream = NativeLoader.class.getClassLoader().getResourceAsStream(path);
         if (versionStream == null)
@@ -26,6 +38,11 @@ public class NativeLoader {
         }
     }
 
+    /**
+     * Get the temporary file path for the binaries, creating if necessary.
+     * @param platform
+     * @return
+     */
     public static File getBinaryPath(String platform) {
         String version = readJarFileLine("org/cef/binaries/" + platform + "/version.txt");
         if (version == null)
@@ -41,6 +58,13 @@ public class NativeLoader {
         return path;
     }
 
+    /**
+     * Unpack a file from the jar.
+     * @param loader
+     * @param jarPath
+     * @param file
+     * @throws IOException
+     */
     public static void copy(ClassLoader loader, String jarPath, File file) throws IOException {
         if (file.exists()) return;
         System.out.printf("Unpacking %s -> %s\n", jarPath, file);
@@ -50,6 +74,11 @@ public class NativeLoader {
         } catch (FileAlreadyExistsException ignored) {}
     }
 
+    /**
+     * Unpacks a directory in the jar.
+     * @param platform
+     * @param directory
+     */
     public static void unpack(String platform, File directory) {
         ClassLoader classLoader = NativeLoader.class.getClassLoader();
         String jarPath = "org/cef/binaries/" + platform + "/";
@@ -68,6 +97,9 @@ public class NativeLoader {
         }
     }
 
+    /**
+     * Unpack all the native binaries.
+     */
     public static void unpack() {
         String platform = getPlatform();
         if (platform == null)

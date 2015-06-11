@@ -10,6 +10,9 @@ import quantum.browser.ui.MainFrame;
 
 import javax.swing.*;
 
+/**
+ * Handle certain request related dialogs.
+ */
 public class RequestHandler extends CefRequestHandlerAdapter {
     private final MainFrame frame;
 
@@ -19,12 +22,14 @@ public class RequestHandler extends CefRequestHandlerAdapter {
 
     @Override
     public boolean getAuthCredentials(CefBrowser browser, boolean isProxy, String host, int port, String realm, String scheme, CefAuthCallback callback) {
+        // Show the password dialog.
         new Thread(new PasswordDialog(frame, callback)).start();
         return true;
     }
 
     @Override
     public boolean onCertificateError(final CefLoadHandler.ErrorCode cert_error, final String request_url, final CefAllowCertificateErrorCallback callback) {
+        // Dialog to show certificate issues.
         new Thread() {
             @Override
             public void run() {

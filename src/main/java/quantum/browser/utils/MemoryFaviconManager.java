@@ -2,6 +2,9 @@ package quantum.browser.utils;
 
 import java.util.HashSet;
 
+/**
+ * A memory backed favicon manager. Unused.
+ */
 public class MemoryFaviconManager extends FaviconManager {
     private HashSet<String> custom = new HashSet<>();
 

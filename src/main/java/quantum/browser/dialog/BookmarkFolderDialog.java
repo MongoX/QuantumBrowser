@@ -8,11 +8,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * New bookmark folder dialog.
+ */
 public class BookmarkFolderDialog extends JDialog implements Runnable {
     public BookmarkFolderDialog(final MainFrame owner, final Bookmarks store, String defaultURL) {
         super(owner, "New Bookmark Folder...", true);
         final JTextField name = new JTextField(20);
 
+        // Layout code. Look at the dialog to see what it does.
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
         add(new JPanel() {{

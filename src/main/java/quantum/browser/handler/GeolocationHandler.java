@@ -7,6 +7,9 @@ import quantum.browser.ui.MainFrame;
 
 import javax.swing.*;
 
+/**
+ * Callback to be registered on geolocation request.
+ */
 public class GeolocationHandler extends CefGeolocationHandlerAdapter {
     private final MainFrame frame;
 
@@ -16,6 +19,7 @@ public class GeolocationHandler extends CefGeolocationHandlerAdapter {
 
     @Override
     public boolean onRequestGeolocationPermission(CefBrowser browser, final String url, int id, final CefGeolocationCallback callback) {
+        // Prompts the user for confirmation.
         new Thread("Geolocation Confirm Thread") {
             @Override
             public void run() {

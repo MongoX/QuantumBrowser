@@ -5,6 +5,9 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Utility for FaviconManager. Performs hashing.
+ */
 public class HashLib {
     private static Charset utf8 = Charset.forName("UTF-8");
     private static String md5Base = new String(new char[32]).replace('\0', '0');

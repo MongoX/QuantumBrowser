@@ -20,8 +20,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * The download listing window.
+ */
 public class DownloadDialog extends JDialog implements CefDownloadHandler {
+    /**
+     * Describes a download.
+     */
     class DownloadEntry {
+        // Stored data to show in the table.
         File path = null;
         String filename, url;
         CefDownloadItemCallback callback;
@@ -38,6 +45,11 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
             update(download, null);
         }
 
+        /**
+         * Update download progress and information.
+         * @param download
+         * @param callback
+         */
         public void update(CefDownloadItem download, CefDownloadItemCallback callback) {
             this.callback = callback;
             path = new File(download.getFullPath());
@@ -50,6 +62,9 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
             model.update(this);
         }
 
+        /**
+         * Abortion.
+         */
         public void abort() {
             if (callback != null) {
                 callback.cancel();
@@ -58,6 +73,11 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
         }
     }
 
+    /**
+     * Helper to make large byte numbers readable.
+     * @param bytes byte count
+     * @return readable string
+     */
     public static String humanReadableByteCount(long bytes) {
         int unit = 1024;
         if (bytes < unit)
@@ -67,12 +87,19 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
+    /**
+     * Data model for the table.
+     */
     class DownloadTableModel extends AbstractTableModel {
         private String[] columns = {"File name", "Received", "Size", "Speed", "Progress", ""};
         private Class<?>[] columnClass = {String.class, String.class, String.class, String.class, int.class, DownloadEntry.class};
         public ArrayList<DownloadEntry> data = new ArrayList<>();
         public HashMap<Integer, DownloadEntry> map = new HashMap<>();
 
+        /**
+         * Update the table.
+         * @param entry
+         */
         public void update(DownloadEntry entry) {
             fireTableDataChanged();
         }
@@ -119,10 +146,14 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
+            // Only the buttons are "editable".
             return columnIndex == 5;
         }
     }
 
+    /**
+     * Renders a progress bar for downloads.
+     */
     class ProgressRenderer extends JProgressBar implements TableCellRenderer {
         public ProgressRenderer() {
             setMinimum(0);
@@ -136,6 +167,9 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
         }
     }
 
+    /**
+     * Renders the remove/abort button.
+     */
     class DownloadButtonRenderer extends JButton implements TableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -145,6 +179,11 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
         }
     }
 
+    /**
+     * Give life to the remove/abort button.
+     *
+     * Simply using editing to hack out the pressing.
+     */
     class DownloadButtonEditor extends DefaultCellEditor {
         JButton button;
         DownloadEntry entry;
@@ -174,12 +213,14 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
         }
     }
 
-
+    // Create the table.
     protected DownloadTableModel model = new DownloadTableModel();
     protected JTable table = new JTable(model);
 
     public DownloadDialog(MainFrame owner) {
         super(owner, "Downloads...", false);
+
+        // Laying out the table.
         add(new JScrollPane(table), BorderLayout.CENTER);
         setSize(640, 480);
         table.setDefaultRenderer(int.class, new ProgressRenderer());
@@ -190,6 +231,8 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
         table.getColumnModel().getColumn(5).setPreferredWidth(30);
         table.getColumnModel().getColumn(5).setCellRenderer(new DownloadButtonRenderer());
         table.getColumnModel().getColumn(5).setCellEditor(new DownloadButtonEditor());
+
+        // Double click to open the selected file.
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -205,6 +248,13 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
         });
     }
 
+    /**
+     * Stores a download to the table as we get notified.
+     * @param browser
+     * @param downloadItem
+     * @param suggestedName
+     * @param callback
+     */
     @Override
     public void onBeforeDownload(CefBrowser browser, CefDownloadItem downloadItem, String suggestedName, CefBeforeDownloadCallback callback) {
         setVisible(true);
@@ -214,6 +264,12 @@ public class DownloadDialog extends JDialog implements CefDownloadHandler {
         callback.Continue(suggestedName, true);
     }
 
+    /**
+     * Update download information as we get notified.
+     * @param browser
+     * @param downloadItem
+     * @param callback
+     */
     @Override
     public void onDownloadUpdated(CefBrowser browser, CefDownloadItem downloadItem, CefDownloadItemCallback callback) {
         DownloadEntry entry = model.map.get(downloadItem.getId());

@@ -30,6 +30,9 @@ import static org.cef.callback.CefContextMenuParams.EditStateFlags.*;
 import static org.cef.callback.CefContextMenuParams.TypeFlags.*;
 import static org.cef.callback.CefMenuModel.MenuId.*;
 
+/**
+ * Panel to make a tab.
+ */
 public class Tab extends JPanel {
     protected TabManager manager;
     protected JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -41,19 +44,28 @@ public class Tab extends JPanel {
     String statusText;
     int loadProgress = 0;
 
+    /**
+     * Constructor.
+     * @param manager
+     * @param client
+     * @param url
+     */
     public Tab(final TabManager manager, CefClient client, String url) {
         super(new BorderLayout());
         this.manager = manager;
         this.client = client;
 
+        // Create the browser.
         browser = client.createBrowser(url, manager.osrEnabled, false, manager.getRequestContext());
         browser.setWindowVisibility(false);
 
+        // Split pane for developer tools.
         splitPane.setTopComponent(browser.getUIComponent());
         splitPane.setEnabled(false);
         splitPane.setDividerSize(0);
         add(splitPane, BorderLayout.CENTER);
 
+        // Do not close the window when you close the tab.
         client.addLifeSpanHandler(new CefLifeSpanHandlerAdapter() {
             @Override
             public boolean doClose(CefBrowser browser) {
@@ -61,6 +73,7 @@ public class Tab extends JPanel {
             }
         });
 
+        // Handlers for address, title, and status changes. Update the state in tab manager.
         client.addDisplayHandler(new CefDisplayHandlerAdapter() {
             @Override
             public void onAddressChange(CefBrowser browser, String url) {
@@ -86,6 +99,7 @@ public class Tab extends JPanel {
             }
         });
 
+        // Loading progress. Actually just 33% of remaining progress every tick.
         final Timer timer = new Timer(200, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -95,6 +109,7 @@ public class Tab extends JPanel {
         });
 
         final String faviconJS = Resources.readResource("quantum/browser/favicon.js");
+        // Handle loading status change.
         client.addLoadHandler(new CefLoadHandlerAdapter() {
             @Override
             public void onLoadingStateChange(CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
@@ -125,6 +140,7 @@ public class Tab extends JPanel {
             }*/
         });
 
+        // Keyboard accelerators.
         client.addKeyboardHandler(new CefKeyboardHandlerAdapter() {
             @Override
             public boolean onKeyEvent(CefBrowser browser, CefKeyEvent event) {
@@ -132,16 +148,16 @@ public class Tab extends JPanel {
                     return false;
                 if (event.type == CefKeyEvent.EventType.KEYEVENT_KEYUP) {
                     switch (event.windows_key_code) {
-                        case 116:
+                        case 116: // F5
                             if ((event.modifiers & CefContextMenuHandler.EventFlags.EVENTFLAG_CONTROL_DOWN) != 0)
                                 browser.reloadIgnoreCache();
                             else
                                 browser.reload();
                             return true;
-                        case 117:
+                        case 117: // F6
                             manager.owner.toolBar.addressBar.requestFocusInWindow();
                             return true;
-                        case 123:
+                        case 123: // F12
                             SwingUtilities.invokeLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -177,6 +193,7 @@ public class Tab extends JPanel {
             }
         });
 
+        // Message router to receive favicon location. Unused since Java can't load .ico files.
         client.addMessageRouter(CefMessageRouter.create(new CefMessageRouterHandlerAdapter() {
             @Override
             public boolean onQuery(CefBrowser browser, long query_id, String request, boolean persistent, CefQueryCallback callback) {
@@ -203,14 +220,25 @@ public class Tab extends JPanel {
             }
         }));
 
+        // Register request handler.
         client.addRequestHandler(new RequestHandler(manager.owner));
 
+        // Register context menu handler.
         client.addContextMenuHandler(new CefContextMenuHandlerAdapter() {
+            // Custom actions.
             public final int MENU_ID_OPEN_LINK = MENU_ID_USER_FIRST;
             public final int MENU_ID_NEW_TAB = MENU_ID_USER_FIRST + 1;
             public final int MENU_ID_COPY_LINK = MENU_ID_USER_FIRST + 2;
             public final int MENU_ID_DOWNLOAD_IMAGE = MENU_ID_USER_FIRST + 3;
 
+            /**
+             * Adapt the context menu as I see fit.
+             *
+             * Look at the context menu to see what this does.
+             * @param browser
+             * @param params
+             * @param model
+             */
             @Override
             public void onBeforeContextMenu(CefBrowser browser, CefContextMenuParams params, CefMenuModel model) {
                 model.clear();
@@ -263,6 +291,14 @@ public class Tab extends JPanel {
                 }
             }
 
+            /**
+             * Actually executing the context menu commands.
+             * @param browser
+             * @param params
+             * @param commandId
+             * @param eventFlags
+             * @return
+             */
             @Override
             public boolean onContextMenuCommand(CefBrowser browser, CefContextMenuParams params, int commandId, int eventFlags) {
                 switch (commandId) {
@@ -293,10 +329,14 @@ public class Tab extends JPanel {
                 }
             }
         });
+        // Geolocation and download handlers.
         client.addGeolocationHandler(new GeolocationHandler(manager.owner));
         client.addDownloadHandler(manager.download);
     }
 
+    /**
+     * Show the find panel.
+     */
     public void showFind() {
         if (findPanel == null)
             findPanel = new FindPanel(this);
@@ -305,6 +345,9 @@ public class Tab extends JPanel {
         revalidate();
     }
 
+    /**
+     * Hide the find panel.
+     */
     public void hideFind() {
         remove(findPanel);
         revalidate();
@@ -312,6 +355,9 @@ public class Tab extends JPanel {
         splitPane.getTopComponent().requestFocusInWindow();
     }
 
+    /**
+     * Show the dev tools.
+     */
     public void showDevTools() {
         if (devTools != null) return;
         devTools = browser.getDevTools();
@@ -319,6 +365,7 @@ public class Tab extends JPanel {
         devToolsUI.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
+                // Hide when the user makes it very small.
                 if (devToolsUI.getHeight() < 10)
                     hideDevTools();
             }
@@ -329,6 +376,9 @@ public class Tab extends JPanel {
         splitPane.setBottomComponent(devToolsUI);
     }
 
+    /**
+     * Hide the dev tools.
+     */
     public void hideDevTools() {
         if (devTools == null) return;
         devTools.close();
@@ -339,6 +389,9 @@ public class Tab extends JPanel {
         splitPane.getTopComponent().requestFocusInWindow();
     }
 
+    /**
+     * Handle tab close.
+     */
     public void close() {
         browser.close();
         client.dispose();

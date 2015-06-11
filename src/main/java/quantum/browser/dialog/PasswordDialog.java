@@ -11,12 +11,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Authentication password prompt.
+ */
 public class PasswordDialog extends JDialog implements Runnable {
     private final JTextField username = new JTextField(20);
     private final JPasswordField password = new JPasswordField(20);
 
     public PasswordDialog(Frame owner, final CefAuthCallback callback) {
         super(owner, "Authentication required", true);
+
+        // Layout code. Look at the dialog to see what it does.
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
         add(new JPanel() {{
@@ -42,6 +47,7 @@ public class PasswordDialog extends JDialog implements Runnable {
                         if (username.getText().isEmpty())
                             return;
                         String password = new String(PasswordDialog.this.password.getPassword());
+                        // Tell the browser about the credentials.
                         callback.Continue(username.getText(), password);
                         setVisible(false);
                         dispose();
@@ -52,6 +58,7 @@ public class PasswordDialog extends JDialog implements Runnable {
                 addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        // Dismiss.
                         callback.cancel();
                         setVisible(false);
                         dispose();

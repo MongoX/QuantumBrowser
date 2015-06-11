@@ -8,13 +8,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 
+/**
+ * The menu bar.
+ */
 public class MenuBar extends JMenuBar {
+    /**
+     * Create a menu item.
+     * @param label
+     * @param action
+     * @return
+     */
     private JMenuItem createMenuItem(String label, final ActionListener action) {
         return new JMenuItem(label) {{
             addActionListener(action);
         }};
     }
 
+    /**
+     * Create a menu item with mnemonic.
+     * @param label
+     * @param mnemonic
+     * @param action
+     * @return
+     */
     private JMenuItem createMenuItem(String label, final char mnemonic, final ActionListener action) {
         return new JMenuItem(label) {{
             setMnemonic(mnemonic);
@@ -22,6 +38,14 @@ public class MenuBar extends JMenuBar {
         }};
     }
 
+    /**
+     * Create a menu item with mnemonic and acclerator.
+     * @param label
+     * @param mnemonic
+     * @param accelerator
+     * @param action
+     * @return
+     */
     private JMenuItem createMenuItem(String label, final char mnemonic, final KeyStroke accelerator, final ActionListener action) {
         return new JMenuItem(label) {{
             setMnemonic(mnemonic);
@@ -30,7 +54,12 @@ public class MenuBar extends JMenuBar {
         }};
     }
 
+    /**
+     * Constructor.
+     * @param owner owning frame.
+     */
     public MenuBar(final MainFrame owner) {
+        // Laying out the menu exactly as you see it. Self-explanatory.
         add(new JMenu("File") {{
             setMnemonic('F');
             add(createMenuItem("New Tab", 'N', KeyStroke.getKeyStroke('N', Event.CTRL_MASK), new ActionListener() {

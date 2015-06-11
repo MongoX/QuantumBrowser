@@ -11,6 +11,9 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Favicon storage manager. Unused since Java doesn't support .ico files.
+ */
 public abstract class FaviconManager {
     protected Path store;
 

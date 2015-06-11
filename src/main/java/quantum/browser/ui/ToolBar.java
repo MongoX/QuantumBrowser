@@ -1,17 +1,24 @@
 package quantum.browser.ui;
 
-
-import org.cef.browser.CefBrowser;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * The toolbar,
+ */
 public class ToolBar extends JToolBar {
     JTextField addressBar = new JTextField();
     private MainFrame owner;
     private TabManager manager;
 
+    /**
+     * Helper to create a button on the navigation bar.
+     * @param iconName
+     * @param toolTip
+     * @param listener
+     * @return
+     */
     private static JButton makeNavButton(final String iconName, final String toolTip, final ActionListener listener) {
         return new JButton() {{
             ImageIcon icon = IconLoader.loadIcon(iconName, 20);
@@ -22,6 +29,7 @@ public class ToolBar extends JToolBar {
         }};
     }
 
+    // Create buttons.
     final JButton backButton = makeNavButton("nav-back.png", "Back", new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -53,10 +61,16 @@ public class ToolBar extends JToolBar {
         }
     });
 
+    /**
+     * Constructor.
+     * @param owner
+     */
     public ToolBar(final MainFrame owner) {
         setLayout(new BorderLayout());
         this.owner = owner;
         manager = owner.tabManager;
+
+        // Layout code. Look at the toolbar to see what this does...
 
         addressBar.addFocusListener(new FocusAdapter() {
             @Override

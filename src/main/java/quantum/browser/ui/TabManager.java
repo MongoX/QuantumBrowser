@@ -18,6 +18,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Tab manager.
+ *
+ * Also handles UI.
+ */
 public class TabManager extends JTabbedPane {
     public final MainFrame owner;
     boolean osrEnabled;
@@ -27,12 +32,19 @@ public class TabManager extends JTabbedPane {
     FaviconManager favicon = new MemoryFaviconManager(Settings.faviconCache.getAbsolutePath());
     DownloadDialog download;
 
+    /**
+     * Constructor.
+     * @param owner
+     * @param osrEnabled
+     */
     public TabManager(final MainFrame owner, boolean osrEnabled) {
         this.owner = owner;
         this.osrEnabled = osrEnabled;
 
         System.out.println(Settings.cookieDirectory.getAbsolutePath());
         download = new DownloadDialog(this.owner);
+
+        // Update state on tab change.
         addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -42,6 +54,7 @@ public class TabManager extends JTabbedPane {
             }
         });
 
+        // Middle mouse click to close tab.
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -70,12 +83,20 @@ public class TabManager extends JTabbedPane {
         });
     }
 
+    /**
+     * Get the cookie manager for all tabs.
+     * @return
+     */
     public CefCookieManager getCookieManager() {
         if (cookieManager == null)
             cookieManager = CefCookieManager.createManager(Settings.cookieDirectory.getAbsolutePath(), false);
         return cookieManager;
     }
 
+    /**
+     * Cet the request context, which contains the cookie manager.
+     * @return
+     */
     public CefRequestContext getRequestContext() {
         if (cookieManager == null)
             requestContext = CefRequestContext.createContext(new CefRequestContextHandler() {
@@ -87,17 +108,34 @@ public class TabManager extends JTabbedPane {
         return requestContext;
     }
 
+    /**
+     * Update the loading progress.
+     *
+     * Filters requests that doesn't belong to the active tab.
+     * @param tab
+     */
     public void updateLoadStatus(Tab tab) {
         if (tab != null && getSelectedComponent() == tab)
             owner.statusBar.setProgress(tab.loadProgress);
     }
 
+    /**
+     * Updates the address bar.
+     *
+     * Filters requests that doesn't belong to the active tab.
+     * @param tab
+     */
     public void updateAddress(Tab tab) {
         if (tab != null && getSelectedComponent() == tab) {
             owner.toolBar.addressBar.setText(tab.browser.getURL());
         }
     }
 
+    /**
+     * Update the navigation bar.
+     * Filters requests that doesn't belong to the active tab.
+     * @param tab
+     */
     public void updateNavigation(Tab tab) {
         if (tab != null && getSelectedComponent() == tab) {
             owner.setTitle(tab.title);
@@ -110,10 +148,17 @@ public class TabManager extends JTabbedPane {
         }
     }
 
+    /**
+     * Creates a new tab to the home page.
+     */
     public void newTab() {
         newTab(Settings.get("home_page", "https://dmoj.ca/"));
     }
 
+    /**
+     * Creates a new tab.
+     * @param url the URL.
+     */
     public void newTab(String url) {
         final Tab tab = new Tab(this, owner.app.createClient(), url);
         insertTab("Loading...", null, tab, null, getSelectedIndex() + 1);
@@ -128,16 +173,28 @@ public class TabManager extends JTabbedPane {
         }});
     }
 
+    /**
+     * Hook to set tab title.
+     * @param index
+     * @param title
+     */
     @Override
     public void setTitleAt(int index, String title) {
         super.setTitleAt(index, title);
         ((TabLabel) getTabComponentAt(index)).getTitleLabel().setText(title);
     }
 
+    /**
+     * Get the current tab.
+     * @return
+     */
     public Tab currentTab() {
         return (Tab) getSelectedComponent();
     }
 
+    /**
+     * Class for tab labels.
+     */
     static class TabLabel extends JPanel {
         private JButton closeButton;
         private JLabel titleLabel;
@@ -146,6 +203,10 @@ public class TabManager extends JTabbedPane {
             setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
             closeButton = new JButton() {
+                /**
+                 * Draw the X.
+                 * @param g
+                 */
                 @Override
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
@@ -172,6 +233,7 @@ public class TabManager extends JTabbedPane {
                 }
 
                 {
+                    // Make the button.
                     setUI(new BasicButtonUI());
                     setContentAreaFilled(false);
                     setFocusable(false);
@@ -182,6 +244,7 @@ public class TabManager extends JTabbedPane {
             setOpaque(false);
             setFocusable(false);
 
+            // Add components.
             add(titleLabel = new JLabel(title));
             add(Box.createHorizontalStrut(3));
             add(closeButton);

@@ -12,6 +12,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * Main browser frame.
+ */
 public class MainFrame extends JFrame {
     final CefApp app;
     final ToolBar toolBar;
@@ -19,7 +22,12 @@ public class MainFrame extends JFrame {
     final TabManager tabManager;
     final StatusBar statusBar;
 
+    /**
+     * Constructor.
+     * @param osrEnabled off-screen rendering?
+     */
     public MainFrame(boolean osrEnabled) {
+        // Create CEF app.
         CefSettings settings = new CefSettings();
         settings.windowless_rendering_enabled = osrEnabled;
         settings.cache_path = Settings.cacheDirectory.getAbsolutePath();
@@ -29,8 +37,10 @@ public class MainFrame extends JFrame {
         app = CefApp.getInstance(settings);
         CefApp.addAppHandler(new AppHandler());
 
+        // Print version.
         System.out.println(app.getVersion());
 
+        // Setup components and window.
         statusBar = new StatusBar();
         tabManager = new TabManager(this, osrEnabled);
         menubar = new MenuBar(this);
@@ -40,20 +50,24 @@ public class MainFrame extends JFrame {
         getContentPane().add(tabManager, BorderLayout.CENTER);
         getContentPane().add(statusBar, BorderLayout.SOUTH);
         pack();
+        // Set window size as remembered.
         setSize(Settings.getDimension("window_size", new Dimension(800, 600)));
 
+        // Handle window close.
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                // Remember window size.
                 Settings.putDimension("window_size", getSize());
                 CefApp.getInstance().dispose();
                 dispose();
             }
         });
 
+        // Create the first tab.
         tabManager.newTab();
 
-
+        // Key stroke bindings for keyboard shortcuts.
         new Object() {{
             getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke('T', Event.CTRL_MASK), this);
             getRootPane().getActionMap().put(this, new AbstractAction() {

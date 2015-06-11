@@ -8,12 +8,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * New bookmark dialog.
+ */
 public class BookmarkDialog extends JDialog implements Runnable {
     public BookmarkDialog(final MainFrame owner, final Bookmarks store, String defaultURL) {
         super(owner, "New Bookmark...", true);
         final JTextField name = new JTextField(20);
         final JTextField url = new JTextField(defaultURL, 20);
 
+        // Layout code. Look at the dialog to see what it does.
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
         add(new JPanel() {{
@@ -36,6 +40,7 @@ public class BookmarkDialog extends JDialog implements Runnable {
                 addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        // Update the bookmark.
                         store.setURL(name.getText(), url.getText());
                         setVisible(false);
                         dispose();
@@ -46,6 +51,7 @@ public class BookmarkDialog extends JDialog implements Runnable {
                 addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        // Dismiss
                         setVisible(false);
                         dispose();
                     }

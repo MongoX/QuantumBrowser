@@ -7,14 +7,22 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
+/**
+ * Setting manager.
+ */
 public class Settings {
+    // The preference node for this app.
     private static Preferences preferences = Preferences.userNodeForPackage(Settings.class);
+
+    // ALl the bookmarks.
     public static final Bookmarks bookmarks = new Bookmarks(preferences.node("bookmarks"));
 
+    // Get the settings.
     public static Preferences get() {
         return preferences;
     }
 
+    // Convenience interface to avoid calling get() too much.
     public static String get(String key, String def) {
         return preferences.get(key, def);
     }
@@ -71,6 +79,12 @@ public class Settings {
         preferences.putLong(key, value);
     }
 
+    /**
+     * Fetches a dimension object from preferences.
+     * @param key the name
+     * @param def the default value
+     * @return
+     */
     public static Dimension getDimension(String key, Dimension def) {
         String[] value = get(key, "").split(":");
         if (value.length != 2) return def;
@@ -84,14 +98,21 @@ public class Settings {
         return new Dimension(w, h);
     }
 
+    /**
+     * Saves a dimension object to preferences.
+     * @param key the name
+     * @param dimension the dimension
+     */
     public static void putDimension(String key, Dimension dimension) {
         put(key, String.format("%d:%d", dimension.width, dimension.height));
     }
 
+    // Various paths.
     public static final String appData, localAppData;
     public static final File dataDirectory, localDataDirectory, cookieDirectory, cacheDirectory;
     public static final File logFile, faviconCache;
 
+    // Populate directory.
     static {
         if (OS.isWindows()) {
             appData = System.getenv("AppData");
