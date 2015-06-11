@@ -25,7 +25,7 @@ public class RequestHandler extends CefRequestHandlerAdapter {
 
     @Override
     public boolean onCertificateError(final CefLoadHandler.ErrorCode cert_error, final String request_url, final CefAllowCertificateErrorCallback callback) {
-        SwingUtilities.invokeLater(new Runnable() {
+        new Thread() {
             @Override
             public void run() {
                 callback.Continue(JOptionPane.showConfirmDialog(frame,
@@ -36,7 +36,7 @@ public class RequestHandler extends CefRequestHandlerAdapter {
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.ERROR_MESSAGE) == JOptionPane.YES_OPTION);
             }
-        });
+        }.start();
         return true;
     }
 }
