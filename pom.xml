@@ -11,7 +11,7 @@
     <repositories>
         <repository>
             <id>quantum</id>
-            <url>http://mvn.quantu.ml/</url>
+            <url>https://mvn.quantum2.xyz/</url>
         </repository>
     </repositories>
 
